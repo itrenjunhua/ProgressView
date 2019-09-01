@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,6 +46,8 @@ public class ScaleView extends View {
     private final int DEFAULT_CURRENT_TEXT_SIZE = sp2px(15); // 默认显示当前刻度文字大小
     private final int DEFAULT_CURRENT_COLOR = Color.RED; // 默认当前刻度和文字颜色
 
+    private final int DEFAULT_SCALE_TEXT_SPACE = dp2px(4); // 文字和刻度线之间的距离
+
     // 刻度线变量
     private Paint mLinePaint;
     private int mLineColor = DEFAULT_COLOR;
@@ -61,6 +64,8 @@ public class ScaleView extends View {
     private int mCurrentTextSize = DEFAULT_CURRENT_TEXT_SIZE;
     private int mTextCurrentColor = DEFAULT_CURRENT_COLOR;
 
+    private int mScaleTextSpace = DEFAULT_SCALE_TEXT_SPACE;
+
     // 需要绘制的区域
     private Rect mDrawRect = new Rect();
     // 控件的宽和高
@@ -72,23 +77,26 @@ public class ScaleView extends View {
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                     // 正在滑动
-                    return super.onScroll(e1, e2, distanceX, distanceY);
+
+                    return true;
                 }
 
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                     // 快速滑动结束
-                    return super.onFling(e1, e2, velocityX, velocityY);
+                    scrollBy((int) velocityX, 0);
+                    return true;
                 }
             });
 
 
     // 数据列表和单位
-    private String unit;
+    private String currentValue = "10";
+    private String unit = "cm";
     private int startValue = 0; // 开始值
-    private int endValue = 100; // 结束值
+    private int endValue = 20; // 结束值
     private int stepLengthValue = 2; // 步长
-    private List<Integer> scaleCellList = new ArrayList<>();
+    private List<String> scaleCellList = new ArrayList<>();
 
     public ScaleView(Context context) {
         this(context, null);
@@ -147,6 +155,7 @@ public class ScaleView extends View {
     protected void onSizeChanged(int w, int h, int oldWidth, int oldHeight) {
         mWidth = w;
         mHeight = h;
+        Log.i("ScaleView", "w = [" + w + "], h = [" + h + "], oldWidth = [" + oldWidth + "], oldHeight = [" + oldHeight + "]");
         calculateRect();
     }
 
@@ -155,12 +164,12 @@ public class ScaleView extends View {
      */
     private void calculateRect() {
         for (int i = startValue; i <= endValue; ) {
-            scaleCellList.add(i);
+            scaleCellList.add(i + "");
             i += stepLengthValue;
         }
 
         mDrawRect.left = 0;
-        mDrawRect.right = scaleCellList.size() * mScaleCellWidth;
+        mDrawRect.right = (scaleCellList.size() - 1) * mScaleCellWidth;
         mDrawRect.top = 0;
         mDrawRect.bottom = mHeight;
     }
@@ -176,14 +185,28 @@ public class ScaleView extends View {
      * 画当前数据文字
      */
     private void drawCurrentData(Canvas canvas) {
+        mTextPaint.setTextSize(mCurrentTextSize);
+        mTextPaint.setColor(mTextCurrentColor);
+        float textWidth = mTextPaint.measureText(currentValue);
+        canvas.drawText(currentValue, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
 
+        mLinePaint.setStrokeWidth(mLineScaleWidth);
+        mLinePaint.setColor(mTextCurrentColor);
+        canvas.drawLine(mWidth / 2, mHeight / 2 - mScaleTextSpace, mWidth / 2, mHeight / 2 + mLineScaleHeightLong * 2, mLinePaint);
     }
 
     /**
      * 画刻度文字
      */
     private void drawScaleText(Canvas canvas) {
+        // 绘制刻度文字
+        mTextPaint.setTextSize(mScaleTextSize);
+        mTextPaint.setColor(mTextColor);
 
+        for (int i = 0; i < scaleCellList.size(); i++) {
+            float textWidth = mTextPaint.measureText(scaleCellList.get(i));
+            canvas.drawText(scaleCellList.get(i), mScaleCellWidth * i - textWidth / 2, mDrawRect.height() / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
+        }
     }
 
     /**
@@ -191,26 +214,49 @@ public class ScaleView extends View {
      */
     private void drawLine(Canvas canvas) {
         // 绘制主轴
+        mLinePaint.setColor(mLineColor);
         mLinePaint.setStrokeWidth(mLineMainWidth);
-        canvas.drawLine(mDrawRect.left, mDrawRect.height() / 2, mDrawRect.right, mDrawRect.height() / 2, mLinePaint);
-        // 绘制刻度
+        int middleHeight = mDrawRect.height() / 2;
+        canvas.drawLine(mDrawRect.left, middleHeight, mDrawRect.right, middleHeight, mLinePaint);
+
+        // 计算刻度线相关
         int smallCell = mScaleCellWidth / 10;
-        int scaleTotalCount = endValue * 10;
-
-        for (int i = 0; i < scaleTotalCount; i++) {
-
+        int scaleTotalCount = (scaleCellList.size() - 1) * 10;
+        // 绘制刻度线
+        mLinePaint.setStrokeWidth(mLineScaleWidth);
+        for (int i = 0; i <= scaleTotalCount; i++) {
+            if (i % 10 == 0)
+                canvas.drawLine(smallCell * i, middleHeight, smallCell * i, middleHeight + mLineScaleHeightLong, mLinePaint);
+            else
+                canvas.drawLine(smallCell * i, middleHeight, smallCell * i, middleHeight + mLineScaleHeightShort, mLinePaint);
         }
     }
 
+    private int downX;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+//        Log.i("ScaleView", "++++++++++++++++++++++ " + event.getAction());
         // 如果是手指弹起事件，需要自己处理，因为手势识别器没有处理
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            return true;
-        } else {
-            // 将事件交给手势识别器处理
-            return gestureDetector.onTouchEvent(event);
+//        if (event.getAction() == MotionEvent.ACTION_UP) {
+//            return true;
+//        } else {
+//            // 将事件交给手势识别器处理
+//            Log.i("ScaleView", "---------------- " + event.getAction());
+//            return gestureDetector.onTouchEvent(event);
+//        }
+
+        int action = event.getAction();
+        if (MotionEvent.ACTION_DOWN == action) {
+            downX = (int) event.getX();
+        } else if (MotionEvent.ACTION_MOVE == action) {
+            int moveX = (int) event.getX();
+            scrollBy(downX - moveX, 0);
+            downX = moveX;
+        } else if (MotionEvent.ACTION_UP == action) {
+            // 计算位置
         }
+        return true;
     }
 
     /**
