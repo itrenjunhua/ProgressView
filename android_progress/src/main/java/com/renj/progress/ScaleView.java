@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +29,7 @@ import androidx.annotation.Nullable;
  * ======================================================================
  */
 public class ScaleView extends View {
+    private final int SMALL_SCALE_IN_SCALE_COUNT = 10;
     // 默认数据常量
     private final int DEFAULT_VIEW_WIDTH = dp2px(200);
     private final int DEFAULT_VIEW_HEIGHT = dp2px(80);
@@ -58,7 +58,7 @@ public class ScaleView extends View {
     private int mLineScaleHeightLong = DEFAULT_SCALE_LINE_HEIGHT_LONG;
     private int mLineScaleHeightShort = DEFAULT_SCALE_LINE_HEIGHT_SHORT;
     private int mScaleCellWidth = DEFAULT_SCALE_CELL_WIDTH;
-    private int mSmallScaleCellWidth = mScaleCellWidth / 10; // 每一个小刻度的宽度
+    private float mSmallScaleCellWidth = mScaleCellWidth / SMALL_SCALE_IN_SCALE_COUNT; // 每一个小刻度的宽度
 
     // 文字变量
     private Paint mTextPaint;
@@ -69,16 +69,13 @@ public class ScaleView extends View {
 
     // 文字和刻度线之间的距离
     private int mScaleTextSpace = DEFAULT_SCALE_TEXT_SPACE;
-    // 偏移量
-    private float mMaxOffset, mMinOffset;
-    private float mOffsetLength; // 移动/滑动偏移量
 
     // 数据和单位
     private String unit = "cm";
-    private int startValue = 0; // 开始值
-    private int endValue = 20; // 结束值
-    private int stepLengthValue = 2; // 步长
-    private float currentValue = 10;
+    private int startValue = 120; // 开始值
+    private int endValue = 250; // 结束值
+    private int stepLengthValue = 10; // 步长
+    private int currentValue = 160;
     private List<Integer> scaleCellList = new ArrayList<>();
 
     // 手势识别器
@@ -163,14 +160,23 @@ public class ScaleView extends View {
      * 确定数据
      */
     private void initData() {
+        paramsCheck();
+
         for (int i = startValue; i <= endValue; ) {
-            scaleCellList.add(i);
+            scaleCellList.add(i * SMALL_SCALE_IN_SCALE_COUNT);
             i += stepLengthValue;
         }
-        mMaxOffset = mWidth / 2;
-        mMinOffset = -(endValue / stepLengthValue * mScaleCellWidth + mWidth / 2);
-        mOffsetLength = -((currentValue - startValue) / stepLengthValue * mScaleCellWidth - mWidth / 2);
-        Log.i("ScaleView", "min: " + mMinOffset + "  max: " + mMaxOffset);
+        currentValue = currentValue * SMALL_SCALE_IN_SCALE_COUNT;
+    }
+
+    // 参数检验
+    private void paramsCheck() {
+        if (stepLengthValue <= 0)
+            throw new IllegalArgumentException("步长(stepLengthValue)必须为大于0的整数.");
+        if (currentValue < startValue || currentValue > endValue)
+            throw new IllegalArgumentException("currentValue 范围应该在 startValue 和 endValue 之间.");
+        if (currentValue % stepLengthValue != 0)
+            throw new IllegalStateException("当前值(currentValue)应该为步长(stepLengthValue)的整数倍.");
     }
 
     @Override
@@ -185,9 +191,10 @@ public class ScaleView extends View {
     private void drawCurrentData(Canvas canvas) {
         mTextPaint.setTextSize(mCurrentTextSize);
         mTextPaint.setColor(mTextCurrentColor);
-        String text = (mOffsetLength) + "";
+        String text = currentValue * 1.0f / SMALL_SCALE_IN_SCALE_COUNT + "";
         float textWidth = mTextPaint.measureText(text);
         canvas.drawText(text, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
+        canvas.drawText(unit, mWidth / 2 + textWidth / 2 + dp2px(4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
 
         mLinePaint.setStrokeWidth(mLineScaleWidth);
         mLinePaint.setColor(mTextCurrentColor);
@@ -198,62 +205,68 @@ public class ScaleView extends View {
      * 画刻度线
      */
     private void drawScaleLineAndText(Canvas canvas) {
-        // 刻度文字画笔
+        // 设置画笔
+        mLinePaint.setColor(mLineColor);
         mTextPaint.setTextSize(mScaleTextSize);
         mTextPaint.setColor(mTextColor);
 
-        // 绘制主轴
-        mLinePaint.setColor(mLineColor);
-        mLinePaint.setStrokeWidth(mLineMainWidth);
-        int middleHeight = mHeight / 2;
-        canvas.drawLine(mMinOffset, middleHeight, Math.max(mWidth,mMaxOffset), middleHeight, mLinePaint);
-
         // 绘制刻度线，从控件中心向两边绘制，保证居中
+        int middleHeight = mHeight / 2;
         int centerX = mWidth / 2;
-        mLinePaint.setStrokeWidth(mLineScaleWidth);
         // 绘制左边
-        float leftX = mOffsetLength;
-        int leftCount = 0;
-        while (leftX > mMinOffset) {
-            leftCount += 1;
-            leftX = leftX - mSmallScaleCellWidth;
-            if (leftCount % 10 == 0) {
+        float leftX = centerX;
+        int leftValue = currentValue;
+        mLinePaint.setStrokeWidth(mLineScaleWidth);
+        while (leftValue > startValue * SMALL_SCALE_IN_SCALE_COUNT) {
+            leftX -= mSmallScaleCellWidth;
+            leftValue -= 1 * stepLengthValue;
+            if (leftValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
                 canvas.drawLine(leftX, middleHeight, leftX, middleHeight + mLineScaleHeightLong, mLinePaint);
-                String text = (currentValue - stepLengthValue * (leftCount / 10)) + "";
+                String text = (leftValue / SMALL_SCALE_IN_SCALE_COUNT) + "";
                 float textWidth = mTextPaint.measureText(text);
                 canvas.drawText(text, leftX - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
             } else {
                 canvas.drawLine(leftX, middleHeight, leftX, middleHeight + mLineScaleHeightShort, mLinePaint);
             }
         }
+        // 绘制中心点左边主轴
+        mLinePaint.setColor(mLineColor);
+        mLinePaint.setStrokeWidth(mLineMainWidth);
+        canvas.drawLine(leftX, middleHeight, centerX, middleHeight, mLinePaint);
 
         // 绘制右边
-        float rightX = mOffsetLength;
-        int rightCount = 0;
-        while (rightX < Math.max(mMaxOffset,mWidth)) {
-            rightCount += 1;
-            rightX = rightX + mSmallScaleCellWidth;
-            if (rightCount % 10 == 0) {
+        float rightX = centerX;
+        int rightValue = currentValue;
+        mLinePaint.setStrokeWidth(mLineScaleWidth);
+        while (rightValue < endValue * SMALL_SCALE_IN_SCALE_COUNT) {
+            rightX += mSmallScaleCellWidth;
+            rightValue += 1 * stepLengthValue;
+            if (rightValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
                 canvas.drawLine(rightX, middleHeight, rightX, middleHeight + mLineScaleHeightLong, mLinePaint);
-                String text = (currentValue + stepLengthValue * (rightCount / 10)) + "";
+                String text = (rightValue / SMALL_SCALE_IN_SCALE_COUNT) + "";
                 float textWidth = mTextPaint.measureText(text);
                 canvas.drawText(text, rightX - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
             } else {
                 canvas.drawLine(rightX, middleHeight, rightX, middleHeight + mLineScaleHeightShort, mLinePaint);
             }
         }
+        // 绘制中心点右边边主轴
+        mLinePaint.setStrokeWidth(mLineMainWidth);
+        canvas.drawLine(centerX, middleHeight, rightX, middleHeight, mLinePaint);
 
         // 绘制中间线
-        canvas.drawLine(mOffsetLength, middleHeight, mOffsetLength, middleHeight + mLineScaleHeightLong, mLinePaint);
-        float textWidth = mTextPaint.measureText(currentValue + "");
-        canvas.drawText(currentValue + "", mOffsetLength - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
+        if (currentValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
+            canvas.drawLine(mWidth / 2, middleHeight, mWidth / 2, middleHeight + mLineScaleHeightLong, mLinePaint);
+            float textWidth = mTextPaint.measureText(currentValue / SMALL_SCALE_IN_SCALE_COUNT + "");
+            canvas.drawText(currentValue / SMALL_SCALE_IN_SCALE_COUNT + "", mWidth / 2 - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
+        }
     }
 
-    private int downX;
+    private float downX;
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
 //        Log.i("ScaleView", "++++++++++++++++++++++ " + event.getAction());
+    public boolean onTouchEvent(MotionEvent event) {
         // 如果是手指弹起事件，需要自己处理，因为手势识别器没有处理
 //        if (event.getAction() == MotionEvent.ACTION_UP) {
 //            return true;
@@ -265,15 +278,16 @@ public class ScaleView extends View {
 
         int action = event.getAction();
         if (MotionEvent.ACTION_DOWN == action) {
-            downX = (int) event.getX();
+            downX = event.getX();
         } else if (MotionEvent.ACTION_MOVE == action) {
-            int moveX = (int) event.getX();
-            //scrollBy(downX - moveX, 0);
-            mOffsetLength = mOffsetLength - (downX - moveX);
-//            if (mOffsetLength <= mMinOffset)
-//                mOffsetLength = mMinOffset;
-//            if (mOffsetLength >= mMaxOffset)
-//                mOffsetLength = mMaxOffset;
+            float moveX = event.getX();
+            float dx = downX - moveX;
+            currentValue += Math.round(dx / mSmallScaleCellWidth) * stepLengthValue;
+            if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && dx > 0)
+                currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
+            if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && dx < 0)
+                currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
+
             invalidate();
             downX = moveX;
         } else if (MotionEvent.ACTION_UP == action) {
