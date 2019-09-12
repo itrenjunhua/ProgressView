@@ -84,14 +84,27 @@ public class ScaleView extends View {
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                     // 正在滑动
+                    currentValue += Math.round(distanceX / mSmallScaleCellWidth) * stepLengthValue;
+                    if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX > 0)
+                        currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX < 0)
+                        currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
 
+                    invalidate();
                     return true;
                 }
 
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                     // 快速滑动结束
-                    scrollBy((int) velocityX, 0);
+                    float dX = e1.getX() - e2.getX();
+                    currentValue += Math.round(dX / mSmallScaleCellWidth) * stepLengthValue;
+                    if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && dX > 0)
+                        currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && dX < 0)
+                        currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
+
+                    invalidate();
                     return true;
                 }
             });
@@ -262,37 +275,9 @@ public class ScaleView extends View {
         }
     }
 
-    private float downX;
-
     @Override
-//        Log.i("ScaleView", "++++++++++++++++++++++ " + event.getAction());
     public boolean onTouchEvent(MotionEvent event) {
-        // 如果是手指弹起事件，需要自己处理，因为手势识别器没有处理
-//        if (event.getAction() == MotionEvent.ACTION_UP) {
-//            return true;
-//        } else {
-//            // 将事件交给手势识别器处理
-//            Log.i("ScaleView", "---------------- " + event.getAction());
-//            return gestureDetector.onTouchEvent(event);
-//        }
-
-        int action = event.getAction();
-        if (MotionEvent.ACTION_DOWN == action) {
-            downX = event.getX();
-        } else if (MotionEvent.ACTION_MOVE == action) {
-            float moveX = event.getX();
-            float dx = downX - moveX;
-            currentValue += Math.round(dx / mSmallScaleCellWidth) * stepLengthValue;
-            if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && dx > 0)
-                currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
-            if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && dx < 0)
-                currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
-
-            invalidate();
-            downX = moveX;
-        } else if (MotionEvent.ACTION_UP == action) {
-            // 计算位置
-        }
+        gestureDetector.onTouchEvent(event);
         return true;
     }
 
