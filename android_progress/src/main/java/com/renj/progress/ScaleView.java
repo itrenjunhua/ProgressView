@@ -1,6 +1,7 @@
 package com.renj.progress;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,9 +35,11 @@ public class ScaleView extends View {
     private final int DEFAULT_VIEW_WIDTH = dp2px(200);
     private final int DEFAULT_VIEW_HEIGHT = dp2px(80);
 
-    private final int DEFAULT_COLOR = Color.BLACK; // 默认线和文字颜色
+    private final int DEFAULT_LINE_COLOR = Color.BLACK; // 默认线颜色
+    private final int DEFAULT_TEXT_COLOR = Color.BLACK; // 默认文字颜色
     private final int DEFAULT_MAIN_LINE_WIDTH = dp2px(1); // 默认主线宽度
     private final int DEFAULT_SCALE_LINE_WIDTH = DEFAULT_MAIN_LINE_WIDTH / 2; // 默认刻度线宽度
+    private final int DEFAULT_CURRENT_SCALE_LINE_WIDTH = DEFAULT_MAIN_LINE_WIDTH; // 默认当前位置刻度线宽度
     private final int DEFAULT_SCALE_LINE_HEIGHT_LONG = dp2px(8); // 默认长刻度线高度
     private final int DEFAULT_SCALE_LINE_HEIGHT_SHORT = DEFAULT_SCALE_LINE_HEIGHT_LONG / 2; // 默认短刻度线高度
     private final int DEFAULT_SCALE_CELL_WIDTH = dp2px(50); // 默认每一个刻度单元格宽度
@@ -46,36 +49,41 @@ public class ScaleView extends View {
     private final int DEFAULT_CURRENT_COLOR = Color.RED; // 默认当前刻度和文字颜色
     private final int DEFAULT_SCALE_TEXT_SPACE = dp2px(4); // 文字和刻度线之间的距离
 
+    private final boolean IS_SHOW_CURRENT_INFO = true; // 是否显示/绘制当前值信息
+
     // 控件的宽和高
     private int mWidth = DEFAULT_VIEW_WIDTH;
     private int mHeight = DEFAULT_VIEW_HEIGHT;
 
     // 刻度线变量
     private Paint mLinePaint;
-    private int mLineColor = DEFAULT_COLOR;
-    private int mLineMainWidth = DEFAULT_MAIN_LINE_WIDTH;
-    private int mLineScaleWidth = DEFAULT_SCALE_LINE_WIDTH;
-    private int mLineScaleHeightLong = DEFAULT_SCALE_LINE_HEIGHT_LONG;
-    private int mLineScaleHeightShort = DEFAULT_SCALE_LINE_HEIGHT_SHORT;
-    private int mScaleCellWidth = DEFAULT_SCALE_CELL_WIDTH;
+    private int mLineColor = DEFAULT_LINE_COLOR;
+    private float mLineMainWidth = DEFAULT_MAIN_LINE_WIDTH;
+    private float mLineScaleWidth = DEFAULT_SCALE_LINE_WIDTH;
+    private float mCurrentLineScaleWidth = DEFAULT_CURRENT_SCALE_LINE_WIDTH;
+    private float mLineScaleHeightLong = DEFAULT_SCALE_LINE_HEIGHT_LONG;
+    private float mLineScaleHeightShort = DEFAULT_SCALE_LINE_HEIGHT_SHORT;
+    private float mScaleCellWidth = DEFAULT_SCALE_CELL_WIDTH;
     private float mSmallScaleCellWidth = mScaleCellWidth / SMALL_SCALE_IN_SCALE_COUNT; // 每一个小刻度的宽度
 
     // 文字变量
     private Paint mTextPaint;
-    private int mTextColor = DEFAULT_COLOR;
-    private int mScaleTextSize = DEFAULT_SCALE_TEXT_SIZE;
-    private int mCurrentTextSize = DEFAULT_CURRENT_TEXT_SIZE;
+    private int mTextColor = DEFAULT_TEXT_COLOR;
+    private float mScaleTextSize = DEFAULT_SCALE_TEXT_SIZE;
+    private float mCurrentTextSize = DEFAULT_CURRENT_TEXT_SIZE;
     private int mTextCurrentColor = DEFAULT_CURRENT_COLOR;
 
     // 文字和刻度线之间的距离
-    private int mScaleTextSpace = DEFAULT_SCALE_TEXT_SPACE;
+    private float mScaleTextSpace = DEFAULT_SCALE_TEXT_SPACE;
+    // 是否显示/绘制当前值信息
+    private boolean isShowCurrentInfo = IS_SHOW_CURRENT_INFO;
 
     // 数据和单位
-    private String unit = "cm";
-    private int startValue = 120; // 开始值
-    private int endValue = 250; // 结束值
-    private int stepLengthValue = 10; // 步长
-    private int currentValue = 160;
+    private String unit;
+    private int startValue; // 开始值
+    private int endValue; // 结束值
+    private int stepLengthValue; // 步长
+    private int currentValue;
     private List<Integer> scaleCellList = new ArrayList<>();
 
     // 手势识别器
@@ -131,6 +139,48 @@ public class ScaleView extends View {
      * 初始化数据
      */
     private void init(Context context, AttributeSet attrs) {
+        initAttrs(context, attrs);
+        initPaint();
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ScaleView);
+
+        // 刻度线变量
+        mLineColor = typedArray.getColor(R.styleable.ScaleView_scale_line_color, DEFAULT_LINE_COLOR);
+        mLineMainWidth = typedArray.getDimension(R.styleable.ScaleView_scale_main_line_width, DEFAULT_MAIN_LINE_WIDTH);
+        mLineScaleWidth = typedArray.getDimension(R.styleable.ScaleView_scale_line_width, DEFAULT_SCALE_LINE_WIDTH);
+        mCurrentLineScaleWidth = typedArray.getDimension(R.styleable.ScaleView_scale_current_line_width, DEFAULT_CURRENT_SCALE_LINE_WIDTH);
+        mLineScaleHeightLong = typedArray.getDimension(R.styleable.ScaleView_scale_line_height_long, DEFAULT_SCALE_LINE_HEIGHT_LONG);
+        mLineScaleHeightShort = typedArray.getDimension(R.styleable.ScaleView_scale_line_height_short, DEFAULT_SCALE_LINE_HEIGHT_SHORT);
+        mScaleCellWidth = typedArray.getDimension(R.styleable.ScaleView_scale_cell_width, DEFAULT_SCALE_CELL_WIDTH);
+        mSmallScaleCellWidth = mScaleCellWidth / SMALL_SCALE_IN_SCALE_COUNT; // 每一个小刻度的宽度
+
+        // 文字变量
+        mTextColor = typedArray.getColor(R.styleable.ScaleView_scale_text_color, DEFAULT_TEXT_COLOR);
+        mScaleTextSize = typedArray.getDimension(R.styleable.ScaleView_scale_text_size, DEFAULT_SCALE_TEXT_SIZE);
+        mCurrentTextSize = typedArray.getDimension(R.styleable.ScaleView_scale_current_text_size, DEFAULT_CURRENT_TEXT_SIZE);
+        mTextCurrentColor = typedArray.getColor(R.styleable.ScaleView_scale_current_color, DEFAULT_CURRENT_COLOR);
+
+        // 文字和刻度线之间的距离
+        mScaleTextSpace = typedArray.getDimension(R.styleable.ScaleView_scale_text_space, DEFAULT_SCALE_TEXT_SPACE);
+        // 是否显示/绘制当前值信息
+        isShowCurrentInfo = typedArray.getBoolean(R.styleable.ScaleView_scale_is_show_current_info, IS_SHOW_CURRENT_INFO);
+
+        // 数据和单位
+        unit = typedArray.getString(R.styleable.ScaleView_scale_unit);
+        startValue = typedArray.getInteger(R.styleable.ScaleView_scale_start_value, 0); // 开始值
+        endValue = typedArray.getInteger(R.styleable.ScaleView_scale_end_value, 100); // 结束值
+        stepLengthValue = typedArray.getInteger(R.styleable.ScaleView_scale_step_length_value, 10); // 步长
+        currentValue = typedArray.getInteger(R.styleable.ScaleView_scale_default_value, 50);
+
+        if (unit == null) unit = "";
+        if (currentValue < startValue || currentValue > endValue) currentValue = startValue;
+
+        typedArray.recycle();
+    }
+
+    private void initPaint() {
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mLinePaint.setDither(true);
         mLinePaint.setStyle(Paint.Style.FILL);
@@ -202,16 +252,18 @@ public class ScaleView extends View {
      * 画当前数据文字
      */
     private void drawCurrentData(Canvas canvas) {
-        mTextPaint.setTextSize(mCurrentTextSize);
-        mTextPaint.setColor(mTextCurrentColor);
-        String text = currentValue * 1.0f / SMALL_SCALE_IN_SCALE_COUNT + "";
-        float textWidth = mTextPaint.measureText(text);
-        canvas.drawText(text, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
-        canvas.drawText(unit, mWidth / 2 + textWidth / 2 + dp2px(4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
+        if (isShowCurrentInfo) {
+            mTextPaint.setTextSize(mCurrentTextSize);
+            mTextPaint.setColor(mTextCurrentColor);
+            String text = currentValue * 1.0f / SMALL_SCALE_IN_SCALE_COUNT + "";
+            float textWidth = mTextPaint.measureText(text);
+            canvas.drawText(text, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
+            canvas.drawText(unit, mWidth / 2 + textWidth / 2 + dp2px(4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
+        }
 
-        mLinePaint.setStrokeWidth(mLineScaleWidth);
+        mLinePaint.setStrokeWidth(mCurrentLineScaleWidth);
         mLinePaint.setColor(mTextCurrentColor);
-        canvas.drawLine(mWidth / 2, mHeight / 2 - mScaleTextSpace, mWidth / 2, mHeight / 2 + mLineScaleHeightLong * 2, mLinePaint);
+        canvas.drawLine(mWidth / 2, mHeight / 2 - mScaleTextSpace, mWidth / 2, mHeight / 2 + mLineScaleHeightLong * 1.5f, mLinePaint);
     }
 
     /**

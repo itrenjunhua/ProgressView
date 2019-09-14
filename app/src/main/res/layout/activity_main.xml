@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +8,12 @@
 
     <com.renj.progress.ScaleView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:scale_current_color="@color/colorAccent"
+        app:scale_default_value="160"
+        app:scale_end_value="250"
+        app:scale_start_value="60"
+        app:scale_step_length_value="10"
+        app:scale_unit="cm" />
 
 </LinearLayout>

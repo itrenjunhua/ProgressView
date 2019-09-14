@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ScaleView">
+        <!--线颜色-->
+        <attr name="scale_line_color" format="color" />
+        <!--主线宽度-->
+        <attr name="scale_main_line_width" format="dimension" />
+        <!--默认当前位置刻度线宽度-->
+        <attr name="scale_current_line_width" format="dimension" />
+        <!--刻度线宽度-->
+        <attr name="scale_line_width" format="dimension" />
+        <!--长刻度线高度-->
+        <attr name="scale_line_height_long" format="dimension" />
+        <!--短刻度线高度-->
+        <attr name="scale_line_height_short" format="dimension" />
+        <!--每一个刻度单元格宽度(两个长刻度之间的宽度)-->
+        <attr name="scale_cell_width" format="dimension" />
+        <!--文字和刻度线之间的距离-->
+        <attr name="scale_text_space" format="dimension" />
+        <!--刻度文字颜色-->
+        <attr name="scale_text_color" format="color" />
+        <!--刻度文字大小-->
+        <attr name="scale_text_size" format="dimension" />
+        <!--是否显示/绘制当前值信息-->
+        <attr name="scale_is_show_current_info" format="boolean" />
+        <!--显示当前刻度文字大小-->
+        <attr name="scale_current_text_size" format="dimension" />
+        <!--当前刻度和文字颜色-->
+        <attr name="scale_current_color" format="color" />
+
+        <!--单位/显示当前值时的单位-->
+        <attr name="scale_unit" format="string" />
+        <!--开始值-->
+        <attr name="scale_start_value" format="integer" />
+        <!--结束值-->
+        <attr name="scale_end_value" format="integer" />
+        <!--步长(每两个刻度之间的差值)，注意：步长(stepLengthValue)必须为大于0的整数.-->
+        <attr name="scale_step_length_value" format="integer" />
+        <!--默认值，注意：范围应该在 startValue 和 endValue 之间并且应该为步长(stepLengthValue)的整数倍-->
+        <attr name="scale_default_value" format="integer" />
+    </declare-styleable>
+
+</resources>
