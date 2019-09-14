@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleProgressView">
+
+        <!--背景圆圈颜色-->
+        <attr name="circle_progress_bg_color" format="color" />
+        <!--进度颜色-->
+        <attr name="circle_progress_color" format="color" />
+        <!--进度条宽度-->
+        <attr name="circle_progress_width" format="dimension" />
+        <!--文字颜色-->
+        <attr name="circle_progress_text_color" format="color" />
+        <!--文字大小-->
+        <attr name="circle_progress_text_size" format="dimension" />
+        <!--当前结果显示样式-->
+        <attr name="circle_progress_show_type" format="enum">
+            <!--不显示当前值-->
+            <enum name="none" value="0" />
+            <!--小数点形式显示-->
+            <enum name="decimal" value="1" />
+            <!--百分比形式显示，默认-->
+            <enum name="percentage" value="2" />
+        </attr>
+        <!--进度开始位置控制-->
+        <attr name="circle_progress_start_point" format="enum">
+            <!--上方-->
+            <enum name="top" value="0" />
+            <!--右上方-->
+            <enum name="top_right" value="1" />
+            <!--右方-->
+            <enum name="right" value="2" />
+            <!--右下方-->
+            <enum name="bottom_right" value="3" />
+            <!--下方-->
+            <enum name="bottom" value="4" />
+            <!--左下方-->
+            <enum name="bottom_left" value="5" />
+            <!--左方-->
+            <enum name="left" value="6" />
+            <!--左上方-->
+            <enum name="top_left" value="7" />
+        </attr>
+
+        <!--进度总大小-->
+        <attr name="circle_progress_total" format="integer" />
+        <!--当前进度-->
+        <attr name="circle_progress_current" format="integer" />
+    </declare-styleable>
+</resources>

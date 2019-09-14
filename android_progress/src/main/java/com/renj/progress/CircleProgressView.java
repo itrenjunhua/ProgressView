@@ -2,6 +2,7 @@ package com.renj.progress;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.renj.progress.utils.DimensionUtils;
 import com.renj.progress.utils.Numberutils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -75,11 +77,11 @@ public class CircleProgressView extends View {
     private float mOffset = mRingWidth / 2;
     private ValueAnimator mValueAnimator;
     // 值相关
-    private float mTotalProgress = 100;
-    private float mCurrentProgress = 50;
-    private float mResultProgress = mCurrentProgress / mTotalProgress;
+    private int mTotalProgress;
+    private int mCurrentProgress;
+    private float mResultProgress;
     private float drawAnimatedFraction;
-    // 使用百分比/小数形式显示结果 0：不显示  1：小数形式 2：百分比
+    // 当前结果显示形式 0：不显示  1：小数形式 2：百分比 0：不显示  1：小数形式 2：百分比
     private int mShowType = SHOW_TYPE_PERCENTAGE;
     // 进度开始位置
     private int mProgressStartPositionValue = mStartPositionMap.get(0);
@@ -108,7 +110,21 @@ public class CircleProgressView extends View {
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressView);
 
+        mBgColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_bg_color, DEFAULT_BG_COLOR);
+        mFullColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_color, DEFAULT_FULL_COLOR);
+        mTextColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_text_color, DEFAULT_TEXT_COLOR);
+        mTextSize = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_text_size, DEFAULT_TEXT_SIZE);
+        mRingWidth = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_width, DEFAULT_CIRCLE_RING_WIDTH);
+
+        mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_total, 100);
+        mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_current, 50);
+
+        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_progress_show_type, 2);
+        mProgressStartPositionValue = mStartPositionMap.get(typedArray.getInt(R.styleable.CircleProgressView_circle_progress_start_point, 0));
+
+        typedArray.recycle();
     }
 
     private void initPaint() {
@@ -161,7 +177,8 @@ public class CircleProgressView extends View {
             throw new IllegalArgumentException("当前进度必须大于等于0并且小于等于最大进度.");
 
         drawAnimatedFraction = 0;
-        mResultProgress = mCurrentProgress / mTotalProgress;
+        mOffset = mRingWidth / 2;
+        mResultProgress = mCurrentProgress * 1.0f / mTotalProgress;
 
         if (mResultProgress != 0)
             startAnimationDraw();
@@ -178,15 +195,20 @@ public class CircleProgressView extends View {
                 mProgressStartPositionValue, mResultProgress * 360 * drawAnimatedFraction, false, mFullPaint);
 
         // 当前进度
+        float currentProgressValue = mResultProgress * drawAnimatedFraction;
         if (mShowType != SHOW_TYPE_NONE) {
             String currentValue = "";
             if (mShowType == SHOW_TYPE_DECIMAL) {
-                currentValue = Numberutils.decimaFloat(mResultProgress * drawAnimatedFraction);
+                currentValue = Numberutils.decimaFloat(currentProgressValue);
             } else if (mShowType == SHOW_TYPE_PERCENTAGE) {
-                currentValue = Numberutils.decimaFloat(mResultProgress * drawAnimatedFraction * 100) + " %";
+                currentValue = Numberutils.decimaFloat(currentProgressValue * 100) + " %";
             }
             float measureText = mTextPaint.measureText(currentValue);
             canvas.drawText(currentValue, (mWidth - measureText) / 2, (mHeight + mTextSize) / 2, mTextPaint);
+        }
+
+        if (onProgressChangeListener != null) {
+            onProgressChangeListener.onProgressChange(this, currentProgressValue);
         }
     }
 
@@ -206,10 +228,28 @@ public class CircleProgressView extends View {
         mValueAnimator.start();
     }
 
+    /**************动态设置数据部分**************/
+    public CircleProgressView setValue(int totalProgress, int currentProgress) {
+        this.mTotalProgress = totalProgress;
+        this.mCurrentProgress = currentProgress;
+        return this;
+    }
+
     /**
      * 使生效，所有设置的数据最后需要调用该方法才能使数据生效
      */
     public void takeEffect() {
         initData();
+    }
+
+    /**************监听部分**************/
+    private OnProgressChangeListener onProgressChangeListener;
+
+    public void setOnProgressChangeListener(OnProgressChangeListener onProgressChangeListener) {
+        this.onProgressChangeListener = onProgressChangeListener;
+    }
+
+    public interface OnProgressChangeListener {
+        void onProgressChange(@NonNull CircleProgressView circleProgressView, float currentValue);
     }
 }

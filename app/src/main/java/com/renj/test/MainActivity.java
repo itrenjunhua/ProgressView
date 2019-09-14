@@ -3,6 +3,7 @@ package com.renj.test;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.renj.progress.CircleProgressView;
 import com.renj.progress.ScaleView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private ScaleView scaleView;
+    private CircleProgressView circleProgressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +20,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         scaleView = findViewById(R.id.scale_view);
+        circleProgressView = findViewById(R.id.circle_progress_view);
 
+        /***************ScaleView***************/
         scaleView
                 .setValue(30, 180, 10, 45, "kg")
                 .takeEffect();
@@ -31,5 +35,15 @@ public class MainActivity extends AppCompatActivity {
                                 "stepLengthValue = [" + stepLengthValue + "]");
                     }
                 });
+
+
+        /***************CircleProgressView***************/
+        circleProgressView.setValue(100, 30).takeEffect();
+        circleProgressView.setOnProgressChangeListener(new CircleProgressView.OnProgressChangeListener() {
+            @Override
+            public void onProgressChange(@NonNull CircleProgressView circleProgressView, float currentValue) {
+                Log.i("MainActivity", "currentValue = [" + currentValue + "]");
+            }
+        });
     }
 }
