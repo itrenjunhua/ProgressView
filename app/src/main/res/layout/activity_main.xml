@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.renj.progress.ScaleView
+        android:id="@+id/scale_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:scale_current_color="@color/colorAccent"

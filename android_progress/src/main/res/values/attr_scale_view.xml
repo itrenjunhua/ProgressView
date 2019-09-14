@@ -37,7 +37,7 @@
         <attr name="scale_end_value" format="integer" />
         <!--步长(每两个刻度之间的差值)，注意：步长(stepLengthValue)必须为大于0的整数.-->
         <attr name="scale_step_length_value" format="integer" />
-        <!--默认值，注意：范围应该在 startValue 和 endValue 之间并且应该为步长(stepLengthValue)的整数倍-->
+        <!--默认值，注意：范围应该在 startValue 和 endValue 之间-->
         <attr name="scale_default_value" format="integer" />
     </declare-styleable>
 

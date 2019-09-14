@@ -13,6 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -83,7 +84,8 @@ public class ScaleView extends View {
     private int startValue; // 开始值
     private int endValue; // 结束值
     private int stepLengthValue; // 步长
-    private int currentValue;
+    private float currentValue; // 当前值
+    private int currentScalePosition; // 当前指针位置
     private List<Integer> scaleCellList = new ArrayList<>();
 
     // 手势识别器
@@ -92,11 +94,11 @@ public class ScaleView extends View {
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                     // 正在滑动
-                    currentValue += Math.round(distanceX / mSmallScaleCellWidth) * stepLengthValue;
-                    if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX > 0)
-                        currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
-                    if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX < 0)
-                        currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    currentScalePosition += Math.round(distanceX / mSmallScaleCellWidth) * stepLengthValue;
+                    if (currentScalePosition > endValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX > 0)
+                        currentScalePosition = endValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    if (currentScalePosition < startValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX < 0)
+                        currentScalePosition = startValue * SMALL_SCALE_IN_SCALE_COUNT;
 
                     invalidate();
                     return true;
@@ -106,11 +108,11 @@ public class ScaleView extends View {
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                     // 快速滑动结束
                     float dX = e1.getX() - e2.getX();
-                    currentValue += Math.round(dX / mSmallScaleCellWidth) * stepLengthValue;
-                    if (currentValue > endValue * SMALL_SCALE_IN_SCALE_COUNT && dX > 0)
-                        currentValue = endValue * SMALL_SCALE_IN_SCALE_COUNT;
-                    if (currentValue < startValue * SMALL_SCALE_IN_SCALE_COUNT && dX < 0)
-                        currentValue = startValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    currentScalePosition += Math.round(dX / mSmallScaleCellWidth) * stepLengthValue;
+                    if (currentScalePosition > endValue * SMALL_SCALE_IN_SCALE_COUNT && dX > 0)
+                        currentScalePosition = endValue * SMALL_SCALE_IN_SCALE_COUNT;
+                    if (currentScalePosition < startValue * SMALL_SCALE_IN_SCALE_COUNT && dX < 0)
+                        currentScalePosition = startValue * SMALL_SCALE_IN_SCALE_COUNT;
 
                     invalidate();
                     return true;
@@ -225,11 +227,12 @@ public class ScaleView extends View {
     private void initData() {
         paramsCheck();
 
+        scaleCellList.clear();
         for (int i = startValue; i <= endValue; ) {
             scaleCellList.add(i * SMALL_SCALE_IN_SCALE_COUNT);
             i += stepLengthValue;
         }
-        currentValue = currentValue * SMALL_SCALE_IN_SCALE_COUNT;
+        currentScalePosition = Math.round(currentValue * SMALL_SCALE_IN_SCALE_COUNT);
     }
 
     // 参数检验
@@ -238,8 +241,6 @@ public class ScaleView extends View {
             throw new IllegalArgumentException("步长(stepLengthValue)必须为大于0的整数.");
         if (currentValue < startValue || currentValue > endValue)
             throw new IllegalArgumentException("currentValue 范围应该在 startValue 和 endValue 之间.");
-        if (currentValue % stepLengthValue != 0)
-            throw new IllegalStateException("当前值(currentValue)应该为步长(stepLengthValue)的整数倍.");
     }
 
     @Override
@@ -252,10 +253,11 @@ public class ScaleView extends View {
      * 画当前数据文字
      */
     private void drawCurrentData(Canvas canvas) {
+        currentValue = currentScalePosition * 1.0f / SMALL_SCALE_IN_SCALE_COUNT;
         if (isShowCurrentInfo) {
             mTextPaint.setTextSize(mCurrentTextSize);
             mTextPaint.setColor(mTextCurrentColor);
-            String text = currentValue * 1.0f / SMALL_SCALE_IN_SCALE_COUNT + "";
+            String text = currentValue + "";
             float textWidth = mTextPaint.measureText(text);
             canvas.drawText(text, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
             canvas.drawText(unit, mWidth / 2 + textWidth / 2 + dp2px(4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
@@ -264,6 +266,9 @@ public class ScaleView extends View {
         mLinePaint.setStrokeWidth(mCurrentLineScaleWidth);
         mLinePaint.setColor(mTextCurrentColor);
         canvas.drawLine(mWidth / 2, mHeight / 2 - mScaleTextSpace, mWidth / 2, mHeight / 2 + mLineScaleHeightLong * 1.5f, mLinePaint);
+
+        if (mOnScaleChangeListener != null)
+            mOnScaleChangeListener.onScaleChange(this, currentValue, unit, startValue, endValue, stepLengthValue);
     }
 
     /**
@@ -280,7 +285,7 @@ public class ScaleView extends View {
         int centerX = mWidth / 2;
         // 绘制左边
         float leftX = centerX;
-        int leftValue = currentValue;
+        int leftValue = currentScalePosition;
         mLinePaint.setStrokeWidth(mLineScaleWidth);
         while (leftValue > startValue * SMALL_SCALE_IN_SCALE_COUNT) {
             leftX -= mSmallScaleCellWidth;
@@ -301,7 +306,7 @@ public class ScaleView extends View {
 
         // 绘制右边
         float rightX = centerX;
-        int rightValue = currentValue;
+        int rightValue = currentScalePosition;
         mLinePaint.setStrokeWidth(mLineScaleWidth);
         while (rightValue < endValue * SMALL_SCALE_IN_SCALE_COUNT) {
             rightX += mSmallScaleCellWidth;
@@ -320,10 +325,10 @@ public class ScaleView extends View {
         canvas.drawLine(centerX, middleHeight, rightX, middleHeight, mLinePaint);
 
         // 绘制中间线
-        if (currentValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
+        if (currentScalePosition / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
             canvas.drawLine(mWidth / 2, middleHeight, mWidth / 2, middleHeight + mLineScaleHeightLong, mLinePaint);
-            float textWidth = mTextPaint.measureText(currentValue / SMALL_SCALE_IN_SCALE_COUNT + "");
-            canvas.drawText(currentValue / SMALL_SCALE_IN_SCALE_COUNT + "", mWidth / 2 - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
+            float textWidth = mTextPaint.measureText(currentScalePosition / SMALL_SCALE_IN_SCALE_COUNT + "");
+            canvas.drawText(currentScalePosition / SMALL_SCALE_IN_SCALE_COUNT + "", mWidth / 2 - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
         }
     }
 
@@ -347,5 +352,108 @@ public class ScaleView extends View {
     public int sp2px(float spValue) {
         float fontScale = getContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**************动态设置数据部分**************/
+
+    /**
+     * 设置取值范围和步长，<b>注意：该方法设置的值需要调用方法{@link #takeEffect()}才能生效</b>
+     *
+     * @param startValue      开始值
+     * @param endValue        结束值
+     * @param stepLengthValue 步长，<b>注意：步长(stepLengthValue)必须为大于0的整数</b>
+     * @return
+     * @see #setValue(int, int, int, int)
+     * @see #setValue(int, int, int, int, String)
+     * @see #setUnit(String)
+     * @see #takeEffect()
+     */
+    public ScaleView setValue(int startValue, int endValue, int stepLengthValue) {
+        this.startValue = startValue;
+        this.endValue = endValue;
+        this.stepLengthValue = stepLengthValue;
+        return this;
+    }
+
+    /**
+     * 设置取值范围，<b>注意：该方法设置的值需要调用方法{@link #takeEffect()}才能生效</b>
+     *
+     * @param startValue      开始值
+     * @param endValue        结束值
+     * @param stepLengthValue 步长，<br/><b>注意：步长(stepLengthValue)必须为大于0的整数</b>
+     * @param currentValue    当前值，<br/><b>注意：<br/>currentScalePosition 范围应该在 startValue 和 endValue 之间.</b>
+     * @return
+     * @see #setValue(int, int, int)
+     * @see #setValue(int, int, int, int, String)
+     * @see #setUnit(String)
+     * @see #takeEffect()
+     */
+    public ScaleView setValue(int startValue, int endValue, int stepLengthValue, int currentValue) {
+        this.startValue = startValue;
+        this.endValue = endValue;
+        this.stepLengthValue = stepLengthValue;
+        this.currentValue = currentValue;
+        return this;
+    }
+
+    /**
+     * 设置单位，<b>注意：该方法设置的值需要调用方法{@link #takeEffect()}才能生效</b>
+     *
+     * @param unit 单位
+     * @return
+     * @see #setValue(int, int, int)
+     * @see #setValue(int, int, int, int)
+     * @see #setValue(int, int, int, int, String)
+     * @see #takeEffect()
+     */
+    public ScaleView setUnit(@NonNull String unit) {
+        if (unit != null) this.unit = unit;
+        return this;
+    }
+
+    /**
+     * 设置值，<b>注意：该方法设置的值需要调用方法{@link #takeEffect()}才能生效</b>
+     *
+     * @param startValue      开始值
+     * @param endValue        结束值
+     * @param stepLengthValue 步长，<br/><b>注意：步长(stepLengthValue)必须为大于0的整数</b>
+     * @param currentValue    当前值，<br/><b>注意：<br/>currentScalePosition 范围应该在 startValue 和 endValue 之间.</b>
+     * @param unit            单位
+     * @return
+     * @see #setValue(int, int, int)
+     * @see #setValue(int, int, int, int)
+     * @see #setUnit(String)
+     * @see #takeEffect()
+     */
+    public ScaleView setValue(int startValue, int endValue, int stepLengthValue, int currentValue, @NonNull String unit) {
+        this.startValue = startValue;
+        this.endValue = endValue;
+        this.stepLengthValue = stepLengthValue;
+        this.currentValue = currentValue;
+        if (unit != null) this.unit = unit;
+        return this;
+    }
+
+    /**
+     * 使生效，所有设置的数据最后需要调用该方法才能使数据生效
+     *
+     * @see #setValue(int, int, int)
+     * @see #setValue(int, int, int, int)
+     * @see #setValue(int, int, int, int, String)
+     * @see #setUnit(String)
+     */
+    public void takeEffect() {
+        initData();
+    }
+
+    /**************监听部分**************/
+    private OnScaleChangeListener mOnScaleChangeListener;
+
+    public void setOnScaleChangeListener(OnScaleChangeListener onScaleChangeListener) {
+        this.mOnScaleChangeListener = onScaleChangeListener;
+    }
+
+    public interface OnScaleChangeListener {
+        void onScaleChange(@NonNull ScaleView scaleView, float currentValue, String unit, int startValue, int endValue, int stepLengthValue);
     }
 }
