@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <com.renj.progress.ScaleView
@@ -16,5 +18,10 @@
         app:scale_start_value="60"
         app:scale_step_length_value="10"
         app:scale_unit="cm" />
+
+    <com.renj.progress.CircleProgressView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
 
 </LinearLayout>

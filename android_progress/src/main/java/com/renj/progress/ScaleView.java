@@ -10,6 +10,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.renj.progress.utils.DimensionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import androidx.annotation.Nullable;
  * <p>
  * 创建时间：2019-08-30   14:46
  * <p>
- * 描述：
+ * 描述：刻度尺效果
  * <p>
  * 修订历史：
  * <p>
@@ -33,22 +35,22 @@ import androidx.annotation.Nullable;
 public class ScaleView extends View {
     private final int SMALL_SCALE_IN_SCALE_COUNT = 10;
     // 默认数据常量
-    private final int DEFAULT_VIEW_WIDTH = dp2px(200);
-    private final int DEFAULT_VIEW_HEIGHT = dp2px(80);
+    private final int DEFAULT_VIEW_WIDTH = DimensionUtils.dp2px(getContext(), 200);
+    private final int DEFAULT_VIEW_HEIGHT = DimensionUtils.dp2px(getContext(), 80);
 
     private final int DEFAULT_LINE_COLOR = Color.BLACK; // 默认线颜色
     private final int DEFAULT_TEXT_COLOR = Color.BLACK; // 默认文字颜色
-    private final int DEFAULT_MAIN_LINE_WIDTH = dp2px(1); // 默认主线宽度
+    private final int DEFAULT_MAIN_LINE_WIDTH = DimensionUtils.dp2px(getContext(), 1); // 默认主线宽度
     private final int DEFAULT_SCALE_LINE_WIDTH = DEFAULT_MAIN_LINE_WIDTH / 2; // 默认刻度线宽度
     private final int DEFAULT_CURRENT_SCALE_LINE_WIDTH = DEFAULT_MAIN_LINE_WIDTH; // 默认当前位置刻度线宽度
-    private final int DEFAULT_SCALE_LINE_HEIGHT_LONG = dp2px(8); // 默认长刻度线高度
+    private final int DEFAULT_SCALE_LINE_HEIGHT_LONG = DimensionUtils.dp2px(getContext(), 8); // 默认长刻度线高度
     private final int DEFAULT_SCALE_LINE_HEIGHT_SHORT = DEFAULT_SCALE_LINE_HEIGHT_LONG / 2; // 默认短刻度线高度
-    private final int DEFAULT_SCALE_CELL_WIDTH = dp2px(50); // 默认每一个刻度单元格宽度
+    private final int DEFAULT_SCALE_CELL_WIDTH = DimensionUtils.dp2px(getContext(), 50); // 默认每一个刻度单元格宽度
 
-    private final int DEFAULT_SCALE_TEXT_SIZE = sp2px(13); // 默认刻度文字大小
-    private final int DEFAULT_CURRENT_TEXT_SIZE = sp2px(15); // 默认显示当前刻度文字大小
+    private final int DEFAULT_SCALE_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 13); // 默认刻度文字大小
+    private final int DEFAULT_CURRENT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15); // 默认显示当前刻度文字大小
     private final int DEFAULT_CURRENT_COLOR = Color.RED; // 默认当前刻度和文字颜色
-    private final int DEFAULT_SCALE_TEXT_SPACE = dp2px(4); // 文字和刻度线之间的距离
+    private final int DEFAULT_SCALE_TEXT_SPACE = DimensionUtils.dp2px(getContext(), 4); // 文字和刻度线之间的距离
 
     private final boolean IS_SHOW_CURRENT_INFO = true; // 是否显示/绘制当前值信息
 
@@ -260,7 +262,7 @@ public class ScaleView extends View {
             String text = currentValue + "";
             float textWidth = mTextPaint.measureText(text);
             canvas.drawText(text, mWidth / 2 - textWidth / 2, mHeight / 2 - mScaleTextSpace * 2, mTextPaint);
-            canvas.drawText(unit, mWidth / 2 + textWidth / 2 + dp2px(4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
+            canvas.drawText(unit, mWidth / 2 + textWidth / 2 + DimensionUtils.dp2px(getContext(), 4), mHeight / 2 - mScaleTextSpace * 3, mTextPaint);
         }
 
         mLinePaint.setStrokeWidth(mCurrentLineScaleWidth);
@@ -336,22 +338,6 @@ public class ScaleView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
         return true;
-    }
-
-    /**
-     * dp转换成px
-     */
-    public int dp2px(float dipValue) {
-        float scale = getContext().getResources().getDisplayMetrics().density;
-        return (int) (dipValue * scale + 0.5f);
-    }
-
-    /**
-     * sp转换成px
-     */
-    public int sp2px(float spValue) {
-        float fontScale = getContext().getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
     }
 
     /**************动态设置数据部分**************/
