@@ -15,8 +15,8 @@ import java.text.DecimalFormat;
  * <p>
  * ======================================================================
  */
-public class Numberutils {
-    public static String decimaFloat(float number) {
+public class NumberUtils {
+    public static String decimalFloat(float number) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return decimalFormat.format(number);
     }

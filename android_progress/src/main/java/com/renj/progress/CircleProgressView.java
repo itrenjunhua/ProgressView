@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.renj.progress.utils.DimensionUtils;
-import com.renj.progress.utils.Numberutils;
+import com.renj.progress.utils.NumberUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -199,9 +199,9 @@ public class CircleProgressView extends View {
         if (mShowType != SHOW_TYPE_NONE) {
             String currentValue = "";
             if (mShowType == SHOW_TYPE_DECIMAL) {
-                currentValue = Numberutils.decimaFloat(currentProgressValue);
+                currentValue = NumberUtils.decimalFloat(currentProgressValue);
             } else if (mShowType == SHOW_TYPE_PERCENTAGE) {
-                currentValue = Numberutils.decimaFloat(currentProgressValue * 100) + " %";
+                currentValue = NumberUtils.decimalFloat(currentProgressValue * 100) + " %";
             }
             float measureText = mTextPaint.measureText(currentValue);
             canvas.drawText(currentValue, (mWidth - measureText) / 2, (mHeight + mTextSize) / 2, mTextPaint);
