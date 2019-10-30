@@ -37,6 +37,7 @@ public class CircleProgressView extends View {
     private final int SHOW_TYPE_NONE = 0; // 不显示当前值
     private final int SHOW_TYPE_DECIMAL = 1; // 小数点形式显示
     private final int SHOW_TYPE_PERCENTAGE = 2; // 百分比形式显示，默认
+    private final int DEFAULT_MAX_PROGRESS = 100; // 默认最大进度
     // 默认颜色和大小
     private int DEFAULT_BG_COLOR = Color.GRAY;
     private int DEFAULT_FULL_COLOR = Color.RED;
@@ -118,10 +119,10 @@ public class CircleProgressView extends View {
         mTextSize = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_text_size, DEFAULT_TEXT_SIZE);
         mRingWidth = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_width, DEFAULT_CIRCLE_RING_WIDTH);
 
-        mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_total, 100);
-        mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_current, 50);
+        mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_total, DEFAULT_MAX_PROGRESS);
+        mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_current, 0);
 
-        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_progress_show_type, 2);
+        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_progress_show_type, SHOW_TYPE_PERCENTAGE);
         mProgressStartPositionValue = mStartPositionMap.get(typedArray.getInt(R.styleable.CircleProgressView_circle_progress_start_point, 0));
 
         typedArray.recycle();

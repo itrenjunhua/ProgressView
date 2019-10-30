@@ -2,6 +2,34 @@
 <resources>
 
     <declare-styleable name="RingTouchView">
+        <!--背景圆圈颜色-->
+        <attr name="ring_progress_bg_color" format="color" />
+        <!--进度颜色-->
+        <attr name="ring_progress_color" format="color" />
+        <!--进度条宽度-->
+        <attr name="ring_progress_width" format="dimension" />
+        <!--文字颜色-->
+        <attr name="ring_progress_text_color" format="color" />
+        <!--文字大小-->
+        <attr name="ring_progress_text_size" format="dimension" />
+        <!--当前进度文字颜色-->
+        <attr name="ring_progress_current_text_color" format="color" />
+        <!--当前进度文字颜色-->
+        <attr name="ring_progress_current_text_size" format="dimension" />
+        <!--当前结果显示样式-->
+        <attr name="ring_progress_show_type" format="enum">
+            <!--不显示当前值-->
+            <enum name="none" value="0" />
+            <!--小数点形式显示-->
+            <enum name="decimal" value="1" />
+            <!--百分比形式显示，默认-->
+            <enum name="percentage" value="2" />
+        </attr>
+
+        <!--进度总大小-->
+        <attr name="ring_progress_total" format="integer" />
+        <!--当前进度-->
+        <attr name="ring_progress_current" format="integer" />
 
     </declare-styleable>
 

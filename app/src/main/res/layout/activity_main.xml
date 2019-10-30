@@ -30,9 +30,10 @@
         app:circle_progress_total="100" />
 
     <com.renj.progress.RingTouchView
-        android:layout_marginTop="30dp"
-        android:background="@color/colorPrimary"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:ring_progress_current="50"
+        app:ring_progress_total="100" />
 
 </LinearLayout>
