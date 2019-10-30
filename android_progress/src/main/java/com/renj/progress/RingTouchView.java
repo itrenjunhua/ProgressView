@@ -30,7 +30,7 @@ import com.renj.progress.utils.DimensionUtils;
 public class RingTouchView extends View {
     // 默认数据常量
     private final int DEFAULT_VIEW_WIDTH = DimensionUtils.dp2px(getContext(), 200);
-    private final int DEFAULT_VIEW_HEIGHT = DimensionUtils.dp2px(getContext(), 100);
+    private final int DEFAULT_VIEW_HEIGHT = DimensionUtils.dp2px(getContext(), 140);
 
     private final int DEFAULT_MIN_VALUE = 0; // 默认最小值
     private final int DEFAULT_MAX_VALUE = 100; // 默认最大值
@@ -140,11 +140,11 @@ public class RingTouchView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         // 画背景
-        canvas.drawArc(mOffset, mOffset, mWidth - mOffset, mHeight - mOffset,
-                180, 360, false, mBgPaint);
+        canvas.drawArc(mOffset, mOffset, mWidth - mOffset, mWidth - mOffset,
+                180, 180, false, mBgPaint);
 
         // 画进度
-        canvas.drawArc(mOffset, mOffset, mWidth - mOffset, mHeight - mOffset,
-                180, 270, false, mFullPaint);
+        canvas.drawArc(mOffset, mOffset, mWidth - mOffset, mWidth - mOffset,
+                180, 180, false, mFullPaint);
     }
 }
