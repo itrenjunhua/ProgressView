@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         scaleView = findViewById(R.id.scale_view);
-        circleProgressView = findViewById(R.id.circle_progress_view);
+        circleProgressView = findViewById(R.id.circle_pv_view);
 
         /***************ScaleView***************/
         scaleView

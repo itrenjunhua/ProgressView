@@ -113,17 +113,17 @@ public class CircleProgressView extends View {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressView);
 
-        mBgColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_bg_color, DEFAULT_BG_COLOR);
-        mFullColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_color, DEFAULT_FULL_COLOR);
-        mTextColor = typedArray.getColor(R.styleable.CircleProgressView_circle_progress_text_color, DEFAULT_TEXT_COLOR);
-        mTextSize = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_text_size, DEFAULT_TEXT_SIZE);
-        mRingWidth = typedArray.getDimension(R.styleable.CircleProgressView_circle_progress_width, DEFAULT_CIRCLE_RING_WIDTH);
+        mBgColor = typedArray.getColor(R.styleable.CircleProgressView_circle_pv_bg_color, DEFAULT_BG_COLOR);
+        mFullColor = typedArray.getColor(R.styleable.CircleProgressView_circle_pv_color, DEFAULT_FULL_COLOR);
+        mTextColor = typedArray.getColor(R.styleable.CircleProgressView_circle_pv_text_color, DEFAULT_TEXT_COLOR);
+        mTextSize = typedArray.getDimension(R.styleable.CircleProgressView_circle_pv_text_size, DEFAULT_TEXT_SIZE);
+        mRingWidth = typedArray.getDimension(R.styleable.CircleProgressView_circle_pv_width, DEFAULT_CIRCLE_RING_WIDTH);
 
-        mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_total, DEFAULT_MAX_PROGRESS);
-        mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_progress_current, 0);
+        mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_pv_total, DEFAULT_MAX_PROGRESS);
+        mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_pv_current, 0);
 
-        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_progress_show_type, SHOW_TYPE_PERCENTAGE);
-        mProgressStartPositionValue = mStartPositionMap.get(typedArray.getInt(R.styleable.CircleProgressView_circle_progress_start_point, 0));
+        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_pv_show_type, SHOW_TYPE_PERCENTAGE);
+        mProgressStartPositionValue = mStartPositionMap.get(typedArray.getInt(R.styleable.CircleProgressView_circle_pv_start_point, 0));
 
         typedArray.recycle();
     }

@@ -3,17 +3,17 @@
     <declare-styleable name="CircleProgressView">
 
         <!--背景圆圈颜色-->
-        <attr name="circle_progress_bg_color" format="color" />
+        <attr name="circle_pv_bg_color" format="color" />
         <!--进度颜色-->
-        <attr name="circle_progress_color" format="color" />
+        <attr name="circle_pv_color" format="color" />
         <!--进度条宽度-->
-        <attr name="circle_progress_width" format="dimension" />
+        <attr name="circle_pv_width" format="dimension" />
         <!--文字颜色-->
-        <attr name="circle_progress_text_color" format="color" />
+        <attr name="circle_pv_text_color" format="color" />
         <!--文字大小-->
-        <attr name="circle_progress_text_size" format="dimension" />
+        <attr name="circle_pv_text_size" format="dimension" />
         <!--当前结果显示样式-->
-        <attr name="circle_progress_show_type" format="enum">
+        <attr name="circle_pv_show_type" format="enum">
             <!--不显示当前值-->
             <enum name="none" value="0" />
             <!--小数点形式显示-->
@@ -22,7 +22,7 @@
             <enum name="percentage" value="2" />
         </attr>
         <!--进度开始位置控制-->
-        <attr name="circle_progress_start_point" format="enum">
+        <attr name="circle_pv_start_point" format="enum">
             <!--上方-->
             <enum name="top" value="0" />
             <!--右上方-->
@@ -42,8 +42,8 @@
         </attr>
 
         <!--进度总大小-->
-        <attr name="circle_progress_total" format="integer" />
+        <attr name="circle_pv_total" format="integer" />
         <!--当前进度-->
-        <attr name="circle_progress_current" format="integer" />
+        <attr name="circle_pv_current" format="integer" />
     </declare-styleable>
 </resources>

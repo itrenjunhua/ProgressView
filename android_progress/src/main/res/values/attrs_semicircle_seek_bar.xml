@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="SemicircleProgressView">
+    <declare-styleable name="SemicircleSeekBar">
         <!--背景圆圈颜色-->
-        <attr name="semicircle_pv_bg_color" format="color" />
+        <attr name="semicircle_sb_bg_color" format="color" />
         <!--进度颜色-->
-        <attr name="semicircle_pv_color" format="color" />
+        <attr name="semicircle_sb_color" format="color" />
         <!--进度条宽度-->
-        <attr name="semicircle_pv_width" format="dimension" />
+        <attr name="semicircle_sb_width" format="dimension" />
         <!--文字颜色-->
-        <attr name="semicircle_pv_text_color" format="color" />
+        <attr name="semicircle_sb_text_color" format="color" />
         <!--文字大小-->
-        <attr name="semicircle_pv_text_size" format="dimension" />
+        <attr name="semicircle_sb_text_size" format="dimension" />
         <!--当前进度文字颜色-->
-        <attr name="semicircle_pv_current_text_color" format="color" />
+        <attr name="semicircle_sb_current_text_color" format="color" />
         <!--当前进度文字颜色-->
-        <attr name="semicircle_pv_current_text_size" format="dimension" />
+        <attr name="semicircle_sb_current_text_size" format="dimension" />
         <!--当前结果显示样式-->
-        <attr name="semicircle_pv_show_type" format="enum">
+        <attr name="semicircle_sb_show_type" format="enum">
             <!--不显示当前值-->
             <enum name="none" value="0" />
             <!--小数点形式显示-->
@@ -27,9 +27,9 @@
         </attr>
 
         <!--进度总大小-->
-        <attr name="semicircle_pv_total" format="integer" />
+        <attr name="semicircle_sb_total" format="integer" />
         <!--当前进度-->
-        <attr name="semicircle_pv_current" format="integer" />
+        <attr name="semicircle_sb_current" format="integer" />
 
     </declare-styleable>
 
