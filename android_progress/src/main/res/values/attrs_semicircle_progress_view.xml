@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="RingTouchView">
+    <declare-styleable name="SemicircleProgressView">
         <!--背景圆圈颜色-->
         <attr name="ring_progress_bg_color" format="color" />
         <!--进度颜色-->

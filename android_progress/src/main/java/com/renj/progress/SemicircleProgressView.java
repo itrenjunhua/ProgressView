@@ -23,13 +23,13 @@ import com.renj.progress.utils.NumberUtils;
  * <p>
  * 创建时间：2019-10-21   11:37
  * <p>
- * 描述：环形滑动进度控件
+ * 描述：半圆形进度控件
  * <p>
  * 修订历史：
  * <p>
  * ======================================================================
  */
-public class RingTouchView extends View {
+public class SemicircleProgressView extends View {
     // 默认数据常量
     private final int DEFAULT_VIEW_WIDTH = DimensionUtils.dp2px(getContext(), 240);
     private final int DEFAULT_VIEW_HEIGHT = DimensionUtils.dp2px(getContext(), 160);
@@ -75,20 +75,20 @@ public class RingTouchView extends View {
     // 当前结果显示形式 0：不显示  1：小数形式 2：百分比 0：不显示  1：小数形式 2：百分比
     private int mShowType = SHOW_TYPE_PERCENTAGE;
 
-    public RingTouchView(Context context) {
+    public SemicircleProgressView(Context context) {
         this(context, null);
     }
 
-    public RingTouchView(Context context, @Nullable AttributeSet attrs) {
+    public SemicircleProgressView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RingTouchView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SemicircleProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
-    public RingTouchView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SemicircleProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
@@ -99,20 +99,20 @@ public class RingTouchView extends View {
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RingTouchView);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SemicircleProgressView);
 
-        mBgColor = typedArray.getColor(R.styleable.RingTouchView_ring_progress_bg_color, DEFAULT_BG_COLOR);
-        mFullColor = typedArray.getColor(R.styleable.RingTouchView_ring_progress_color, DEFAULT_FULL_COLOR);
-        mTextColor = typedArray.getColor(R.styleable.RingTouchView_ring_progress_text_color, DEFAULT_TEXT_COLOR);
-        mTextSize = typedArray.getDimension(R.styleable.RingTouchView_ring_progress_text_size, DEFAULT_TEXT_SIZE);
-        mTextCurrentColor = typedArray.getColor(R.styleable.RingTouchView_ring_progress_current_text_color, DEFAULT_CURRENT_TEXT_COLOR);
-        mTextCurrentSize = typedArray.getDimension(R.styleable.RingTouchView_ring_progress_current_text_size, DEFAULT_CURRENT_TEXT_SIZE);
-        mRingWidth = typedArray.getDimension(R.styleable.RingTouchView_ring_progress_width, DEFAULT_CIRCLE_RING_WIDTH);
+        mBgColor = typedArray.getColor(R.styleable.SemicircleProgressView_ring_progress_bg_color, DEFAULT_BG_COLOR);
+        mFullColor = typedArray.getColor(R.styleable.SemicircleProgressView_ring_progress_color, DEFAULT_FULL_COLOR);
+        mTextColor = typedArray.getColor(R.styleable.SemicircleProgressView_ring_progress_text_color, DEFAULT_TEXT_COLOR);
+        mTextSize = typedArray.getDimension(R.styleable.SemicircleProgressView_ring_progress_text_size, DEFAULT_TEXT_SIZE);
+        mTextCurrentColor = typedArray.getColor(R.styleable.SemicircleProgressView_ring_progress_current_text_color, DEFAULT_CURRENT_TEXT_COLOR);
+        mTextCurrentSize = typedArray.getDimension(R.styleable.SemicircleProgressView_ring_progress_current_text_size, DEFAULT_CURRENT_TEXT_SIZE);
+        mRingWidth = typedArray.getDimension(R.styleable.SemicircleProgressView_ring_progress_width, DEFAULT_CIRCLE_RING_WIDTH);
 
-        mTotalProgress = typedArray.getInteger(R.styleable.RingTouchView_ring_progress_total, DEFAULT_MAX_PROGRESS);
-        mCurrentProgress = typedArray.getInteger(R.styleable.RingTouchView_ring_progress_current, 0);
+        mTotalProgress = typedArray.getInteger(R.styleable.SemicircleProgressView_ring_progress_total, DEFAULT_MAX_PROGRESS);
+        mCurrentProgress = typedArray.getInteger(R.styleable.SemicircleProgressView_ring_progress_current, 0);
 
-        mShowType = typedArray.getInt(R.styleable.RingTouchView_ring_progress_show_type, SHOW_TYPE_PERCENTAGE);
+        mShowType = typedArray.getInt(R.styleable.SemicircleProgressView_ring_progress_show_type, SHOW_TYPE_PERCENTAGE);
 
         typedArray.recycle();
     }
@@ -235,7 +235,7 @@ public class RingTouchView extends View {
     }
 
     /**************动态设置数据部分**************/
-    public RingTouchView setValue(int totalProgress, int currentProgress) {
+    public SemicircleProgressView setValue(int totalProgress, int currentProgress) {
         this.mTotalProgress = totalProgress;
         this.mCurrentProgress = currentProgress;
         return this;
@@ -256,6 +256,6 @@ public class RingTouchView extends View {
     }
 
     public interface OnProgressChangeListener {
-        void onProgressChange(@NonNull RingTouchView ringTouchView, float currentValue);
+        void onProgressChange(@NonNull SemicircleProgressView semicircleProgressView, float currentValue);
     }
 }

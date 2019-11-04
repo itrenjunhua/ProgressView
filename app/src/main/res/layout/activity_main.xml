@@ -29,7 +29,7 @@
         app:circle_progress_start_point="top_left"
         app:circle_progress_total="100" />
 
-    <com.renj.progress.RingTouchView
+    <com.renj.progress.SemicircleProgressView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
