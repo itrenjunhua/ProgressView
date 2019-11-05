@@ -1,53 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <com.renj.progress.ScaleView
+        android:id="@+id/scale_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_height="80dp"
+        android:visibility="gone"
+        app:scale_current_color="@color/colorAccent"
+        app:scale_default_value="160"
+        app:scale_end_value="250"
+        app:scale_start_value="60"
+        app:scale_step_length_value="10"
+        app:scale_unit="cm" />
 
-        <com.renj.progress.ScaleView
-            android:id="@+id/scale_view"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            app:scale_current_color="@color/colorAccent"
-            app:scale_default_value="160"
-            app:scale_end_value="250"
-            app:scale_start_value="60"
-            app:scale_step_length_value="10"
-            app:scale_unit="cm" />
-
-        <com.renj.progress.CircleProgressView
-            android:id="@+id/circle_pv_view"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_marginTop="30dp"
-            app:circle_pv_current="20"
-            app:circle_pv_show_type="decimal"
-            app:circle_pv_start_point="top_left"
-            app:circle_pv_total="100" />
+    <com.renj.progress.CircleProgressView
+        android:id="@+id/circle_pv_view"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        app:circle_pv_current="20"
+        app:circle_pv_show_type="decimal"
+        app:circle_pv_start_point="top_left"
+        app:circle_pv_total="100" />
 
 
-        <com.renj.progress.SemicircleProgressView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_marginTop="30dp"
-            app:semicircle_pv_current="50"
-            app:semicircle_pv_total="100" />
+    <com.renj.progress.SemicircleProgressView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        app:semicircle_pv_current="50"
+        app:semicircle_pv_total="100" />
 
-        <com.renj.progress.SemicircleSeekBar
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_marginTop="30dp"
-            app:semicircle_pv_current="50"
-            app:semicircle_pv_total="100" />
+    <com.renj.progress.SemicircleSeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="30dp"
+        app:semicircle_pv_current="50"
+        app:semicircle_pv_total="100" />
 
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

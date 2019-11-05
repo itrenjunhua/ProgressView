@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
@@ -238,7 +239,8 @@ public class SemicircleSeekBar extends View {
         float leftAndTop = mOffset + innerMargin;
         float rightAndBottom = mWidth - mOffset - innerMargin;
         Path pathOut = new Path();
-        pathOut.addArc(innerMargin - 20, innerMargin - 20, mWidth - innerMargin + 20, mWidth - innerMargin + 20, 180, 180);
+        RectF rectF = new RectF(innerMargin - 20, innerMargin - 20, mWidth - innerMargin + 20, mWidth + mOffset);
+        pathOut.addArc(rectF, 180, 180);
 
         RectF boundsOut = new RectF();
         pathOut.computeBounds(boundsOut, true);
@@ -246,20 +248,37 @@ public class SemicircleSeekBar extends View {
         regionOut.setPath(pathOut, new Region((int) boundsOut.left, (int) boundsOut.top, (int) boundsOut.right, (int) boundsOut.bottom));
 
         Path pathInner = new Path();
-        pathInner.addArc(leftAndTop + 20, leftAndTop + 20, rightAndBottom - 20, rightAndBottom - 20, 180, 180);
+        pathInner.addArc(leftAndTop + 20, leftAndTop + 20, rightAndBottom - 20, rightAndBottom, 180, 180);
         RectF boundsInner = new RectF();
         pathInner.computeBounds(boundsInner, true);
         Region regionInner = new Region();
         regionInner.setPath(pathInner, new Region((int) boundsInner.left, (int) boundsInner.top, (int) boundsInner.right, (int) boundsInner.bottom));
 
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        boolean containsOut = regionOut.contains(x, y);
-        boolean containsInner = regionInner.contains(x, y);
+        int xPos = (int) event.getX();
+        int yPos = (int) event.getY();
+        boolean containsOut = regionOut.contains(xPos, yPos);
+        boolean containsInner = regionInner.contains(xPos, yPos);
 
         if (containsOut && !containsInner) {
-            this.x = x;
-            this.y = y;
+            float x = event.getX() - rectF.centerX() + 20;
+            float y = event.getY() - rectF.centerY() + 20;
+            // convert to arc Angle
+            double angle = Math.toDegrees(Math.atan2(y, x) + (Math.PI));
+            drawAnimatedFraction = 1;
+
+            if (angle < 0 || angle > 270) angle = 0;
+            if (angle > 180) angle = 180;
+            mResultProgress = (float) (angle / 180);
+
+            Path path = new Path();
+            path.addArc(new RectF(leftAndTop, leftAndTop + mOffset, rightAndBottom, rightAndBottom), 180, 180);
+            PathMeasure pathMeasure = new PathMeasure(path, false);
+
+            float[] tan = new float[2];
+            float[] pos = new float[2];
+            pathMeasure.getPosTan(pathMeasure.getLength() * mResultProgress, pos, tan);
+            this.x = (int) pos[0];
+            this.y = (int) pos[1];
             invalidate();
         }
         return true;
