@@ -11,7 +11,6 @@ import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -80,6 +79,13 @@ public class SemicircleSeekBar extends View {
     private float drawAnimatedFraction;
     // 当前结果显示形式 0：不显示  1：小数形式 2：百分比 0：不显示  1：小数形式 2：百分比
     private int mShowType = SHOW_TYPE_PERCENTAGE;
+    // 环形四周间距,有文字时修改文字与环形的对齐方式
+    private int innerMargin;
+    private float leftAndTop;
+    private float rightAndBottom;
+    // 拖动点的中心坐标
+    private int flagPointX, flagPointY;
+    private TouchEventArea touchEventArea;
 
     public SemicircleSeekBar(Context context) {
         this(context, null);
@@ -159,8 +165,15 @@ public class SemicircleSeekBar extends View {
         mOffset = mRingWidth / 2;
         mResultProgress = mCurrentProgress * 1.0f / mTotalProgress;
 
-        x = (int) (mOffset + DimensionUtils.dp2px(getContext(), 10));
-        y = mWidth / 2;
+        // 环形四周间距,有文字时修改文字与环形的对齐方式
+        innerMargin = DimensionUtils.dp2px(getContext(), 10);
+        leftAndTop = mOffset + innerMargin;
+        rightAndBottom = mWidth - mOffset - innerMargin;
+
+        flagPointX = (int) (mOffset + DimensionUtils.dp2px(getContext(), 10));
+        flagPointY = mWidth / 2;
+
+        touchEventArea = new TouchEventArea().invoke();
 
         if (mResultProgress != 0)
             startAnimationDraw();
@@ -184,14 +197,8 @@ public class SemicircleSeekBar extends View {
         }
     }
 
-    private int x, y;
-
     @Override
     protected void onDraw(Canvas canvas) {
-        // 环形四周间距,有文字时修改文字与环形的对齐方式
-        int innerMargin = DimensionUtils.dp2px(getContext(), 10);
-        float leftAndTop = mOffset + innerMargin;
-        float rightAndBottom = mWidth - mOffset - innerMargin;
         // 画背景
         canvas.drawArc(leftAndTop, leftAndTop, rightAndBottom, rightAndBottom,
                 180, 180, false, mBgPaint);
@@ -210,7 +217,7 @@ public class SemicircleSeekBar extends View {
                 180, drawAnimatedFraction * mResultProgress * 180, false, mFullPaint);
 
         // 画滑动图标
-        canvas.drawCircle(x, y - mOffset, mOffset, mFullPaint);
+        canvas.drawCircle(flagPointX, flagPointY - mOffset, mOffset, mFullPaint);
 
         // 画当前进度文字
         float currentProgressValue = mResultProgress * drawAnimatedFraction;
@@ -234,34 +241,14 @@ public class SemicircleSeekBar extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // 环形四周间距,有文字时修改文字与环形的对齐方式
-        int innerMargin = DimensionUtils.dp2px(getContext(), 10);
-        float leftAndTop = mOffset + innerMargin;
-        float rightAndBottom = mWidth - mOffset - innerMargin;
-        Path pathOut = new Path();
-        RectF rectF = new RectF(innerMargin - 20, innerMargin - 20, mWidth - innerMargin + 20, mWidth + mOffset);
-        pathOut.addArc(rectF, 180, 180);
-
-        RectF boundsOut = new RectF();
-        pathOut.computeBounds(boundsOut, true);
-        Region regionOut = new Region();
-        regionOut.setPath(pathOut, new Region((int) boundsOut.left, (int) boundsOut.top, (int) boundsOut.right, (int) boundsOut.bottom));
-
-        Path pathInner = new Path();
-        pathInner.addArc(leftAndTop + 20, leftAndTop + 20, rightAndBottom - 20, rightAndBottom, 180, 180);
-        RectF boundsInner = new RectF();
-        pathInner.computeBounds(boundsInner, true);
-        Region regionInner = new Region();
-        regionInner.setPath(pathInner, new Region((int) boundsInner.left, (int) boundsInner.top, (int) boundsInner.right, (int) boundsInner.bottom));
-
         int xPos = (int) event.getX();
         int yPos = (int) event.getY();
-        boolean containsOut = regionOut.contains(xPos, yPos);
-        boolean containsInner = regionInner.contains(xPos, yPos);
+        boolean containsOut = touchEventArea.regionOut.contains(xPos, yPos);
+        boolean containsInner = touchEventArea.regionInner.contains(xPos, yPos);
 
         if (containsOut && !containsInner) {
-            float x = event.getX() - rectF.centerX() + 20;
-            float y = event.getY() - rectF.centerY() + 20;
+            float x = event.getX() - touchEventArea.rectF.centerX() + 20;
+            float y = event.getY() - touchEventArea.rectF.centerY() + 20;
             // convert to arc Angle
             double angle = Math.toDegrees(Math.atan2(y, x) + (Math.PI));
             drawAnimatedFraction = 1;
@@ -277,11 +264,12 @@ public class SemicircleSeekBar extends View {
             float[] tan = new float[2];
             float[] pos = new float[2];
             pathMeasure.getPosTan(pathMeasure.getLength() * mResultProgress, pos, tan);
-            this.x = (int) pos[0];
-            this.y = (int) pos[1];
+            this.flagPointX = (int) pos[0];
+            this.flagPointY = (int) pos[1];
             invalidate();
+            return true;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
     private void startAnimationDraw() {
@@ -323,5 +311,33 @@ public class SemicircleSeekBar extends View {
 
     public interface OnProgressChangeListener {
         void onProgressChange(@NonNull SemicircleSeekBar semicircleProgressView, float currentValue);
+    }
+
+    /**
+     * 计算点击事件位置
+     */
+    private class TouchEventArea {
+        RectF rectF;
+        Region regionOut;
+        Region regionInner;
+
+        public TouchEventArea invoke() {
+            Path pathOut = new Path();
+            rectF = new RectF(innerMargin - 20, innerMargin - 20, mWidth - innerMargin + 20, mWidth + mOffset);
+            pathOut.addArc(rectF, 180, 180);
+
+            RectF boundsOut = new RectF();
+            pathOut.computeBounds(boundsOut, true);
+            regionOut = new Region();
+            regionOut.setPath(pathOut, new Region((int) boundsOut.left, (int) boundsOut.top, (int) boundsOut.right, (int) boundsOut.bottom));
+
+            Path pathInner = new Path();
+            pathInner.addArc(leftAndTop + 20, leftAndTop + 20, rightAndBottom - 20, rightAndBottom, 180, 180);
+            RectF boundsInner = new RectF();
+            pathInner.computeBounds(boundsInner, true);
+            regionInner = new Region();
+            regionInner.setPath(pathInner, new Region((int) boundsInner.left, (int) boundsInner.top, (int) boundsInner.right, (int) boundsInner.bottom));
+            return this;
+        }
     }
 }
