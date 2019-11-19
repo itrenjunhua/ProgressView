@@ -243,6 +243,18 @@ public class SemicircleSeekBar extends View {
                 180, drawAnimatedFraction * mResultProgress * 180, false, mFullPaint);
 
         // 画滑动图标
+        if (drawAnimatedFraction != 1) {
+            // 有动画时,动态计算位置
+            Path path = new Path();
+            path.addArc(new RectF(leftAndTop, leftAndTop + mOffset, rightAndBottom, rightAndBottom), 180, 180);
+            PathMeasure pathMeasure = new PathMeasure(path, false);
+
+            float[] tan = new float[2];
+            float[] pos = new float[2];
+            pathMeasure.getPosTan(pathMeasure.getLength() * mResultProgress * drawAnimatedFraction, pos, tan);
+            this.flagPointX = (int) pos[0];
+            this.flagPointY = (int) pos[1];
+        }
         if (mThumbBitmap != null) {
             canvas.drawBitmap(mThumbBitmap, flagPointX - mThumbBitmapSize / 2, flagPointY - mOffset - mThumbBitmapSize / 2, mThumbPaint);
         } else {
