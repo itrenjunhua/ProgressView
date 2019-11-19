@@ -20,6 +20,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.renj.progress.utils.BitmapUtils;
 import com.renj.progress.utils.DimensionUtils;
 import com.renj.progress.utils.NumberUtils;
 
@@ -140,7 +141,7 @@ public class SemicircleSeekBar extends View {
         mThumbBitmapSize = (int) typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_size, DEFAULT_THUMB_SIZE);
         Drawable drawable = typedArray.getDrawable(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_bitmap);
         if (drawable != null)
-            mThumbBitmap = drawableToBitmap(drawable, mThumbBitmapSize);
+            mThumbBitmap = BitmapUtils.drawableToBitmap(drawable, mThumbBitmapSize, mThumbBitmapSize);
 
         innerMargin = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_innerMargin, DEFAULT_INNER_MARGIN);
         textPadding = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_textPadding, DEFAULT_INNER_MARGIN);
@@ -301,20 +302,6 @@ public class SemicircleSeekBar extends View {
             return true;
         }
         return super.onTouchEvent(event);
-    }
-
-    /**
-     * 将 Drawable  转换为 Bitmap
-     */
-    public Bitmap drawableToBitmap(Drawable drawable, int bitmapSize) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-        Bitmap bitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
     }
 
     private void startAnimationDraw() {
