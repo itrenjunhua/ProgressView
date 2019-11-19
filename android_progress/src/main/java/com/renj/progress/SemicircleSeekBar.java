@@ -3,6 +3,7 @@ package com.renj.progress;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,6 +11,8 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.graphics.Region;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,6 +54,8 @@ public class SemicircleSeekBar extends View {
     private float DEFAULT_CIRCLE_RING_WIDTH = DimensionUtils.dp2px(getContext(), 12);
     private float DEFAULT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15);
     private float DEFAULT_CURRENT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 18);
+    private int DEFAULT_INNER_MARGIN = DimensionUtils.dp2px(getContext(), 10);
+    private int DEFAULT_THUMB_SIZE = DimensionUtils.dp2px(getContext(), 12);
 
     // 默认控件的宽和高
     private int mWidth = DEFAULT_VIEW_WIDTH;
@@ -62,15 +67,24 @@ public class SemicircleSeekBar extends View {
     // 填充画笔
     private Paint mFullPaint;
     private int mFullColor = DEFAULT_FULL_COLOR;
+    private Paint mThumbPaint;
+    private int mThumbColor = DEFAULT_FULL_COLOR;
     // 文字画笔
     private Paint mTextPaint;
     private int mTextColor = DEFAULT_TEXT_COLOR;
     private float mTextSize = DEFAULT_TEXT_SIZE;
     private int mTextCurrentColor = DEFAULT_CURRENT_TEXT_COLOR;
     private float mTextCurrentSize = DEFAULT_CURRENT_TEXT_SIZE;
+    // 最大值/最小值与环形的距离值
+    private float textPadding = DEFAULT_INNER_MARGIN;
     // 圆环厚度
     private float mRingWidth = DEFAULT_CIRCLE_RING_WIDTH;
     private float mOffset = mRingWidth / 2;
+    // 滑动图标半径,默认2倍圆环厚度
+    private float mThumbRadius = mRingWidth * 2;
+    // 滑动图标为图片
+    private Bitmap mThumbBitmap;
+    private int mThumbBitmapSize = DEFAULT_THUMB_SIZE;
     private ValueAnimator mValueAnimator;
     // 值相关
     private int mTotalProgress = DEFAULT_MAX_PROGRESS;
@@ -80,7 +94,7 @@ public class SemicircleSeekBar extends View {
     // 当前结果显示形式 0：不显示  1：小数形式 2：百分比 0：不显示  1：小数形式 2：百分比
     private int mShowType = SHOW_TYPE_PERCENTAGE;
     // 环形四周间距,有文字时修改文字与环形的对齐方式
-    private int innerMargin;
+    private float innerMargin = DEFAULT_INNER_MARGIN;
     private float leftAndTop;
     private float rightAndBottom;
     // 拖动点的中心坐标
@@ -121,6 +135,16 @@ public class SemicircleSeekBar extends View {
         mTextCurrentSize = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_current_text_size, DEFAULT_CURRENT_TEXT_SIZE);
         mRingWidth = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_width, DEFAULT_CIRCLE_RING_WIDTH);
 
+        mThumbRadius = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_radius, DEFAULT_THUMB_SIZE / 2);
+        mThumbColor = typedArray.getColor(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_color, mFullColor);
+        mThumbBitmapSize = (int) typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_size, DEFAULT_THUMB_SIZE);
+        Drawable drawable = typedArray.getDrawable(R.styleable.SemicircleSeekBar_semicircle_sb_thumb_bitmap);
+        if (drawable != null)
+            mThumbBitmap = drawableToBitmap(drawable, mThumbBitmapSize);
+
+        innerMargin = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_innerMargin, DEFAULT_INNER_MARGIN);
+        textPadding = typedArray.getDimension(R.styleable.SemicircleSeekBar_semicircle_sb_textPadding, DEFAULT_INNER_MARGIN);
+
         mTotalProgress = typedArray.getInteger(R.styleable.SemicircleSeekBar_semicircle_sb_total, DEFAULT_MAX_PROGRESS);
         mCurrentProgress = typedArray.getInteger(R.styleable.SemicircleSeekBar_semicircle_sb_current, 0);
 
@@ -141,6 +165,10 @@ public class SemicircleSeekBar extends View {
         mFullPaint.setStrokeWidth(mRingWidth);
         mFullPaint.setColor(mFullColor);
         mFullPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mThumbPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mThumbPaint.setStyle(Paint.Style.FILL);
+        mThumbPaint.setColor(mThumbColor);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(mTextColor);
@@ -165,12 +193,10 @@ public class SemicircleSeekBar extends View {
         mOffset = mRingWidth / 2;
         mResultProgress = mCurrentProgress * 1.0f / mTotalProgress;
 
-        // 环形四周间距,有文字时修改文字与环形的对齐方式
-        innerMargin = DimensionUtils.dp2px(getContext(), 10);
         leftAndTop = mOffset + innerMargin;
         rightAndBottom = mWidth - mOffset - innerMargin;
 
-        flagPointX = (int) (mOffset + DimensionUtils.dp2px(getContext(), 10));
+        flagPointX = (int) (mOffset + innerMargin);
         flagPointY = mWidth / 2;
 
         touchEventArea = new TouchEventArea().invoke();
@@ -208,7 +234,7 @@ public class SemicircleSeekBar extends View {
         mTextPaint.setTextSize(mTextSize);
         float measureMinText = mTextPaint.measureText(0 + "");
         float measureMaxText = mTextPaint.measureText(mTotalProgress + "");
-        float textY = mWidth / 2 + (mOffset + innerMargin) + DimensionUtils.dp2px(getContext(), 6);
+        float textY = mWidth / 2 + (mOffset + innerMargin) + textPadding;
         canvas.drawText(0 + "", innerMargin + mOffset / 2 - measureMinText / 2, textY, mTextPaint);
         canvas.drawText(mTotalProgress + "", mWidth - measureMaxText - (innerMargin + mOffset) / 2, textY, mTextPaint);
 
@@ -217,7 +243,12 @@ public class SemicircleSeekBar extends View {
                 180, drawAnimatedFraction * mResultProgress * 180, false, mFullPaint);
 
         // 画滑动图标
-        canvas.drawCircle(flagPointX, flagPointY - mOffset, mOffset, mFullPaint);
+        if (mThumbBitmap != null) {
+            canvas.drawBitmap(mThumbBitmap, flagPointX - mThumbBitmapSize / 2, flagPointY - mOffset - mThumbBitmapSize / 2, mThumbPaint);
+        } else {
+            canvas.drawCircle(flagPointX, flagPointY - mOffset, mThumbRadius, mThumbPaint);
+        }
+
 
         // 画当前进度文字
         float currentProgressValue = mResultProgress * drawAnimatedFraction;
@@ -231,7 +262,7 @@ public class SemicircleSeekBar extends View {
             mTextPaint.setColor(mTextCurrentColor);
             mTextPaint.setTextSize(mTextCurrentSize);
             float measureText = mTextPaint.measureText(currentValue);
-            canvas.drawText(currentValue, (mWidth - measureText) / 2, mWidth / 4 + (mOffset + innerMargin) * 2, mTextPaint);
+            canvas.drawText(currentValue, (mWidth - measureText) / 2, mWidth / 3, mTextPaint);
         }
 
         if (onProgressChangeListener != null) {
@@ -270,6 +301,20 @@ public class SemicircleSeekBar extends View {
             return true;
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * 将 Drawable  转换为 Bitmap
+     */
+    public Bitmap drawableToBitmap(Drawable drawable, int bitmapSize) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 
     private void startAnimationDraw() {
@@ -317,13 +362,15 @@ public class SemicircleSeekBar extends View {
      * 计算点击事件位置
      */
     private class TouchEventArea {
+        // 扩展事件区域,由线的宽度向周围扩展
+        private int eventAreaOffset = DimensionUtils.dp2px(getContext(), 15);
         RectF rectF;
         Region regionOut;
         Region regionInner;
 
         public TouchEventArea invoke() {
             Path pathOut = new Path();
-            rectF = new RectF(innerMargin - 20, innerMargin - 20, mWidth - innerMargin + 20, mWidth + mOffset);
+            rectF = new RectF(innerMargin - eventAreaOffset, innerMargin - eventAreaOffset, mWidth - innerMargin + eventAreaOffset, mWidth + mOffset);
             pathOut.addArc(rectF, 180, 180);
 
             RectF boundsOut = new RectF();
@@ -332,7 +379,7 @@ public class SemicircleSeekBar extends View {
             regionOut.setPath(pathOut, new Region((int) boundsOut.left, (int) boundsOut.top, (int) boundsOut.right, (int) boundsOut.bottom));
 
             Path pathInner = new Path();
-            pathInner.addArc(leftAndTop + 20, leftAndTop + 20, rightAndBottom - 20, rightAndBottom, 180, 180);
+            pathInner.addArc(leftAndTop + eventAreaOffset, leftAndTop + eventAreaOffset, rightAndBottom - eventAreaOffset, rightAndBottom, 180, 180);
             RectF boundsInner = new RectF();
             pathInner.computeBounds(boundsInner, true);
             regionInner = new Region();

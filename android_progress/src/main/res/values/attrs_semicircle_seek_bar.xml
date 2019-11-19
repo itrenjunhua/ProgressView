@@ -8,6 +8,18 @@
         <attr name="semicircle_sb_color" format="color" />
         <!--进度条宽度-->
         <attr name="semicircle_sb_width" format="dimension" />
+        <!--滑动图标半径-->
+        <attr name="semicircle_sb_thumb_radius" format="dimension" />
+        <!--滑动图标颜色-->
+        <attr name="semicircle_sb_thumb_color" format="color" />
+        <!--滑动图标-->
+        <attr name="semicircle_sb_thumb_bitmap" format="reference" />
+        <!--滑动图标大小-->
+        <attr name="semicircle_sb_thumb_size" format="dimension" />
+        <!--环形四周间距,有文字时修改文字与环形的对齐方式-->
+        <attr name="semicircle_sb_innerMargin" format="dimension" />
+        <!--最大值/最小值文字与环形的距离值-->
+        <attr name="semicircle_sb_textPadding" format="dimension" />
         <!--文字颜色-->
         <attr name="semicircle_sb_text_color" format="color" />
         <!--文字大小-->

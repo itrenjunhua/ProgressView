@@ -44,8 +44,12 @@
         android:layout_width="wrap_content"
         android:layout_height="200dp"
         app:semicircle_sb_color="@color/colorPrimary"
+        app:semicircle_sb_thumb_color="@color/colorAccent"
         android:layout_marginTop="30dp"
         app:semicircle_pv_current="50"
+        app:semicircle_sb_thumb_bitmap="@mipmap/ic_launcher"
+        app:semicircle_sb_thumb_size="12dp"
+        app:semicircle_sb_width="5dp"
         app:semicircle_pv_total="100" />
 
 </LinearLayout>
