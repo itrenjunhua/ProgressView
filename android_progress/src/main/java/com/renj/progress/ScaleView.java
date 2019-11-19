@@ -83,10 +83,11 @@ public class ScaleView extends View {
 
     // 数据和单位
     private String unit;
+    private int startValueOffset = 0; // 因为在滑动的时候使用了 Math.floor() 方法,导致滑动时候绘制和初始绘制有偏差,使用这个值进行修正
     private int startValue; // 开始值
     private int endValue; // 结束值
     private int stepLengthValue; // 步长
-    private float currentValue; // 当前值
+    private int currentValue; // 当前值
     private int currentScalePosition; // 当前指针位置
     private List<Integer> scaleCellList = new ArrayList<>();
 
@@ -96,7 +97,9 @@ public class ScaleView extends View {
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                     // 正在滑动
-                    currentScalePosition += Math.round(distanceX / mSmallScaleCellWidth) * stepLengthValue;
+                    startValueOffset = 1;
+                    float temp = currentScalePosition + distanceX / mSmallScaleCellWidth * stepLengthValue;
+                    currentScalePosition = Math.round(temp);
                     if (currentScalePosition > endValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX > 0)
                         currentScalePosition = endValue * SMALL_SCALE_IN_SCALE_COUNT;
                     if (currentScalePosition < startValue * SMALL_SCALE_IN_SCALE_COUNT && distanceX < 0)
@@ -109,8 +112,10 @@ public class ScaleView extends View {
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                     // 快速滑动结束
+                    startValueOffset = 1;
                     float dX = e1.getX() - e2.getX();
-                    currentScalePosition += Math.round(dX / mSmallScaleCellWidth) * stepLengthValue;
+                    float temp = currentScalePosition + dX / mSmallScaleCellWidth * stepLengthValue;
+                    currentScalePosition = Math.round(temp);
                     if (currentScalePosition > endValue * SMALL_SCALE_IN_SCALE_COUNT && dX > 0)
                         currentScalePosition = endValue * SMALL_SCALE_IN_SCALE_COUNT;
                     if (currentScalePosition < startValue * SMALL_SCALE_IN_SCALE_COUNT && dX < 0)
@@ -229,6 +234,7 @@ public class ScaleView extends View {
     private void initData() {
         paramsCheck();
 
+        startValueOffset = 0;
         scaleCellList.clear();
         for (int i = startValue; i <= endValue; ) {
             scaleCellList.add(i * SMALL_SCALE_IN_SCALE_COUNT);
@@ -255,7 +261,7 @@ public class ScaleView extends View {
      * 画当前数据文字
      */
     private void drawCurrentData(Canvas canvas) {
-        currentValue = currentScalePosition * 1.0f / SMALL_SCALE_IN_SCALE_COUNT;
+        currentValue = (int) Math.floor(currentScalePosition * 1.0f / SMALL_SCALE_IN_SCALE_COUNT);
         if (isShowCurrentInfo) {
             mTextPaint.setTextSize(mCurrentTextSize);
             mTextPaint.setColor(mTextCurrentColor);
@@ -289,10 +295,10 @@ public class ScaleView extends View {
         float leftX = centerX;
         int leftValue = currentScalePosition;
         mLinePaint.setStrokeWidth(mLineScaleWidth);
-        while (leftValue > startValue * SMALL_SCALE_IN_SCALE_COUNT) {
+        while (leftValue > (startValue + startValueOffset) * SMALL_SCALE_IN_SCALE_COUNT) {
             leftX -= mSmallScaleCellWidth;
             leftValue -= 1 * stepLengthValue;
-            if (leftValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
+            if (Math.floor(leftValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT) == 0) {
                 canvas.drawLine(leftX, middleHeight, leftX, middleHeight + mLineScaleHeightLong, mLinePaint);
                 String text = (leftValue / SMALL_SCALE_IN_SCALE_COUNT) + "";
                 float textWidth = mTextPaint.measureText(text);
@@ -313,7 +319,7 @@ public class ScaleView extends View {
         while (rightValue < endValue * SMALL_SCALE_IN_SCALE_COUNT) {
             rightX += mSmallScaleCellWidth;
             rightValue += 1 * stepLengthValue;
-            if (rightValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
+            if (Math.floor(rightValue / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT) == 0) {
                 canvas.drawLine(rightX, middleHeight, rightX, middleHeight + mLineScaleHeightLong, mLinePaint);
                 String text = (rightValue / SMALL_SCALE_IN_SCALE_COUNT) + "";
                 float textWidth = mTextPaint.measureText(text);
@@ -327,8 +333,8 @@ public class ScaleView extends View {
         canvas.drawLine(centerX, middleHeight, rightX, middleHeight, mLinePaint);
 
         // 绘制中间线
+        canvas.drawLine(mWidth / 2, middleHeight, mWidth / 2, middleHeight + mLineScaleHeightLong, mLinePaint);
         if (currentScalePosition / stepLengthValue % SMALL_SCALE_IN_SCALE_COUNT == 0) {
-            canvas.drawLine(mWidth / 2, middleHeight, mWidth / 2, middleHeight + mLineScaleHeightLong, mLinePaint);
             float textWidth = mTextPaint.measureText(currentScalePosition / SMALL_SCALE_IN_SCALE_COUNT + "");
             canvas.drawText(currentScalePosition / SMALL_SCALE_IN_SCALE_COUNT + "", mWidth / 2 - textWidth / 2, mHeight / 2 + mLineScaleHeightLong + mScaleTextSize + mScaleTextSpace, mTextPaint);
         }

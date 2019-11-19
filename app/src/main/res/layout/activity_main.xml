@@ -12,7 +12,7 @@
         android:id="@+id/scale_view"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:scale_current_color="@color/colorAccent"
         app:scale_default_value="160"
         app:scale_end_value="250"
@@ -43,6 +43,7 @@
     <com.renj.progress.SemicircleSeekBar
         android:layout_width="wrap_content"
         android:layout_height="200dp"
+        app:semicircle_sb_color="@color/colorPrimary"
         android:layout_marginTop="30dp"
         app:semicircle_pv_current="50"
         app:semicircle_pv_total="100" />
