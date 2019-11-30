@@ -241,6 +241,8 @@ public class ScaleView extends View {
             i += stepLengthValue;
         }
         currentScalePosition = Math.round(currentValue * SMALL_SCALE_IN_SCALE_COUNT);
+
+        postInvalidate();
     }
 
     // 参数检验

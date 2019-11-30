@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/bt_set_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="手动设置值" />
+
+    <com.renj.progress.ScaleView
+        android:id="@+id/scale_view"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:visibility="visible"
+        app:scale_current_color="@color/colorAccent"
+        app:scale_default_value="160"
+        app:scale_end_value="250"
+        app:scale_start_value="60"
+        app:scale_step_length_value="10"
+        app:scale_unit="cm" />
+
+    <com.renj.progress.SemicircleSeekBar
+        android:id="@+id/semicircle_sb_view"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="40dp"
+        app:semicircle_sb_color="@color/colorPrimary"
+        app:semicircle_sb_current="50"
+        app:semicircle_sb_thumb_bitmap="@mipmap/ic_launcher"
+        app:semicircle_sb_thumb_color="@color/colorAccent"
+        app:semicircle_sb_thumb_size="12dp"
+        app:semicircle_sb_total="100"
+        app:semicircle_sb_width="5dp" />
+
+</LinearLayout>

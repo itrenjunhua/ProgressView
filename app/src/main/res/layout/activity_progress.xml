@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/bt_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="更新进度" />
+
+    <com.renj.progress.CircleProgressView
+        android:id="@+id/circle_pv_view"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        app:circle_pv_current="20"
+        app:circle_pv_show_type="decimal"
+        app:circle_pv_start_point="top_left"
+        app:circle_pv_total="100" />
+
+    <com.renj.progress.SemicircleProgressView
+        android:id="@+id/semicircle_pv_view"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="40dp"
+        app:semicircle_pv_current="50"
+        app:semicircle_pv_total="100" />
+
+</LinearLayout>

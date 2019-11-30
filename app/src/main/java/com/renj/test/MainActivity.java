@@ -1,49 +1,27 @@
 package com.renj.test;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.renj.progress.CircleProgressView;
-import com.renj.progress.ScaleView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ScaleView scaleView;
-    private CircleProgressView circleProgressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        scaleView = findViewById(R.id.scale_view);
-        circleProgressView = findViewById(R.id.circle_pv_view);
-
-        /***************ScaleView***************/
-        scaleView
-                .setValue(30, 180, 10, 45, "kg")
-                .takeEffect();
-        scaleView
-                .setOnScaleChangeListener(new ScaleView.OnScaleChangeListener() {
-                    @Override
-                    public void onScaleChange(@NonNull ScaleView scaleView, float currentValue, String unit, int startValue, int endValue, int stepLengthValue) {
-                        Log.i("MainActivity", "currentValue = [" + currentValue + "], unit = [" + unit + "], " +
-                                "startValue = [" + startValue + "], endValue = [" + endValue + "], " +
-                                "stepLengthValue = [" + stepLengthValue + "]");
-                    }
-                });
+        findViewById(R.id.bt_progress).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProgressActivity.class);
+            startActivity(intent);
+        });
 
 
-        /***************CircleProgressView***************/
-        circleProgressView.setValue(100, 30).takeEffect();
-        circleProgressView.setOnProgressChangeListener(new CircleProgressView.OnProgressChangeListener() {
-            @Override
-            public void onProgressChange(@NonNull CircleProgressView circleProgressView, float currentValue) {
-                Log.i("MainActivity", "currentValue = [" + currentValue + "]");
-            }
+        findViewById(R.id.bt_touch).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TouchActivity.class);
+            startActivity(intent);
         });
     }
 }
