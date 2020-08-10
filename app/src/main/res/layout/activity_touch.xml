@@ -25,6 +25,9 @@
         app:scale_end_value="250"
         app:scale_start_value="60"
         app:scale_step_length_value="10"
+        app:scale_is_both_ends_tran="true"
+        app:scale_both_ends_tran_start="#40FF0000"
+        app:scale_both_ends_tran_end="#FFFF00"
         app:scale_unit="cm" />
 
     <com.renj.progress.SemicircleSeekBar

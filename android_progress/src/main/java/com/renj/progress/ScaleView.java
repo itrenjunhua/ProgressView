@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -54,6 +57,10 @@ public class ScaleView extends View {
 
     private final boolean IS_SHOW_CURRENT_INFO = true; // 是否显示/绘制当前值信息
 
+    private final boolean IS_BOTH_ENDS_TRAN = true; // 是否两端透明
+    private final int BOTH_ENDS_TRAN_START = Color.parseColor("#50FFFFFF"); // 两端透明开始颜色
+    private final int BOTH_ENDS_TRAN_END = Color.parseColor("#FFFFFF"); // 两端透明结束颜色
+
     // 控件的宽和高
     private int mWidth = DEFAULT_VIEW_WIDTH;
     private int mHeight = DEFAULT_VIEW_HEIGHT;
@@ -80,6 +87,13 @@ public class ScaleView extends View {
     private float mScaleTextSpace = DEFAULT_SCALE_TEXT_SPACE;
     // 是否显示/绘制当前值信息
     private boolean isShowCurrentInfo = IS_SHOW_CURRENT_INFO;
+
+    // 透明前景画笔
+    private Paint mTranForgePaint;
+    // 两端透明
+    private boolean bothEndsTran = IS_BOTH_ENDS_TRAN;
+    // 两端透明色
+    private int startTranColor = BOTH_ENDS_TRAN_START, endTranColor = BOTH_ENDS_TRAN_END;
 
     // 数据和单位
     private String unit;
@@ -183,6 +197,10 @@ public class ScaleView extends View {
         stepLengthValue = typedArray.getInteger(R.styleable.ScaleView_scale_step_length_value, 10); // 步长
         currentValue = typedArray.getInteger(R.styleable.ScaleView_scale_default_value, 50);
 
+        isShowCurrentInfo = typedArray.getBoolean(R.styleable.ScaleView_scale_is_show_current_info, IS_BOTH_ENDS_TRAN);
+        startTranColor = typedArray.getColor(R.styleable.ScaleView_scale_both_ends_tran_start, BOTH_ENDS_TRAN_START);
+        endTranColor = typedArray.getColor(R.styleable.ScaleView_scale_both_ends_tran_end, BOTH_ENDS_TRAN_END);
+
         if (unit == null) unit = "";
         if (currentValue < startValue || currentValue > endValue) currentValue = startValue;
 
@@ -201,6 +219,9 @@ public class ScaleView extends View {
         mTextPaint.setStyle(Paint.Style.FILL);
         mTextPaint.setColor(mTextColor);
         mTextPaint.setTextSize(mScaleTextSize);
+
+        mTranForgePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTranForgePaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
@@ -257,6 +278,25 @@ public class ScaleView extends View {
     protected void onDraw(Canvas canvas) {
         drawScaleLineAndText(canvas);
         drawCurrentData(canvas);
+        if (bothEndsTran)
+            drawTranForge(canvas);
+    }
+
+    /**
+     * 画两端透明
+     */
+    private void drawTranForge(Canvas canvas) {
+        int centerHeight = mHeight / 2;
+        int tranWidth = mWidth / 3;
+        RectF tranRect = new RectF(0, 0, tranWidth, mHeight);
+        mTranForgePaint.setShader(new LinearGradient(tranRect.left, centerHeight, tranRect.right, centerHeight,
+                endTranColor, startTranColor, Shader.TileMode.REPEAT));
+        canvas.drawRect(tranRect, mTranForgePaint);
+
+        tranRect.offset(tranWidth * 2, 0);
+        mTranForgePaint.setShader(new LinearGradient(tranRect.left, centerHeight, tranRect.right, centerHeight,
+                startTranColor, endTranColor, Shader.TileMode.REPEAT));
+        canvas.drawRect(tranRect, mTranForgePaint);
     }
 
     /**

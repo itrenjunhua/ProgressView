@@ -39,6 +39,13 @@
         <attr name="scale_step_length_value" format="integer" />
         <!--默认值，注意：范围应该在 startValue 和 endValue 之间-->
         <attr name="scale_default_value" format="integer" />
+
+        <!--是否需要在两端显示透明度渐变-->
+        <attr name="scale_is_both_ends_tran" format="boolean" />
+        <!--在两端显示透明度渐变开始颜色-->
+        <attr name="scale_both_ends_tran_start" format="color" />
+        <!--在两端显示透明度渐变结束颜色-->
+        <attr name="scale_both_ends_tran_end" format="color" />
     </declare-styleable>
 
 </resources>
