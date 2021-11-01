@@ -23,7 +23,8 @@ import androidx.annotation.Nullable;
  * <p>
  * 创建时间：2019-09-15   0:54
  * <p>
- * 描述：圆形进度条效果
+ * 描述：圆形进度条效果。<b>注意：该控件每次设置进度后都会重新开始绘制，
+ * 如果需要直接在上一次进度上进行累加，请使用 {@link CircleProgressBar} 控件</b>
  * <p>
  * 修订历史：
  * <p>
@@ -34,19 +35,20 @@ public class CircleProgressView extends View {
     // 默认数据常量
     private final int DEFAULT_VIEW_WIDTH = DimensionUtils.dp2px(getContext(), 200);
     private final int DEFAULT_VIEW_HEIGHT = DimensionUtils.dp2px(getContext(), 200);
-    private final int SHOW_TYPE_NONE = 0; // 不显示当前值
-    private final int SHOW_TYPE_DECIMAL = 1; // 小数点形式显示
-    private final int SHOW_TYPE_PERCENTAGE = 2; // 百分比形式显示，默认
+    private final int PROGRESS_TEXT_NONE = 0; // 不显示当前值
+    private final int PROGRESS_TEXT_DECIMAL = 1; // 小数点形式显示
+    private final int PROGRESS_TEXT_PERCENTAGE = 2; // 百分比形式显示，默认
+
     private final int DEFAULT_MAX_PROGRESS = 100; // 默认最大进度
     // 默认颜色和大小
-    private int DEFAULT_BG_COLOR = Color.GRAY;
-    private int DEFAULT_FULL_COLOR = Color.RED;
-    private int DEFAULT_TEXT_COLOR = Color.RED;
-    private float DEFAULT_CIRCLE_RING_WIDTH = DimensionUtils.dp2px(getContext(), 12);
-    private float DEFAULT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15);
+    private final int DEFAULT_BG_COLOR = Color.GRAY;
+    private final int DEFAULT_FULL_COLOR = Color.RED;
+    private final int DEFAULT_TEXT_COLOR = Color.RED;
+    private final float DEFAULT_CIRCLE_RING_WIDTH = DimensionUtils.dp2px(getContext(), 12);
+    private final float DEFAULT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15);
 
     // 进度开始位置集合
-    private static ArrayMap<Integer, Integer> mStartPositionMap = new ArrayMap<>(8);
+    private static final ArrayMap<Integer, Integer> mStartPositionMap = new ArrayMap<>(8);
 
     static {
         mStartPositionMap.put(0, -90);
@@ -83,7 +85,7 @@ public class CircleProgressView extends View {
     private float mResultProgress;
     private float drawAnimatedFraction;
     // 当前结果显示形式 0：不显示  1：小数形式 2：百分比 0：不显示  1：小数形式 2：百分比
-    private int mShowType = SHOW_TYPE_PERCENTAGE;
+    private int mProgressTextType = PROGRESS_TEXT_PERCENTAGE;
     // 进度开始位置
     private int mProgressStartPositionValue = mStartPositionMap.get(0);
 
@@ -122,7 +124,7 @@ public class CircleProgressView extends View {
         mTotalProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_pv_total, DEFAULT_MAX_PROGRESS);
         mCurrentProgress = typedArray.getInteger(R.styleable.CircleProgressView_circle_pv_current, 0);
 
-        mShowType = typedArray.getInt(R.styleable.CircleProgressView_circle_pv_show_type, SHOW_TYPE_PERCENTAGE);
+        mProgressTextType = typedArray.getInt(R.styleable.CircleProgressView_circle_pv_progress_text_type, PROGRESS_TEXT_PERCENTAGE);
         mProgressStartPositionValue = mStartPositionMap.get(typedArray.getInt(R.styleable.CircleProgressView_circle_pv_start_point, 0));
 
         typedArray.recycle();
@@ -197,11 +199,11 @@ public class CircleProgressView extends View {
 
         // 当前进度
         float currentProgressValue = mResultProgress * drawAnimatedFraction;
-        if (mShowType != SHOW_TYPE_NONE) {
+        if (mProgressTextType != PROGRESS_TEXT_NONE) {
             String currentValue = "";
-            if (mShowType == SHOW_TYPE_DECIMAL) {
+            if (mProgressTextType == PROGRESS_TEXT_DECIMAL) {
                 currentValue = NumberUtils.decimalFloat(currentProgressValue);
-            } else if (mShowType == SHOW_TYPE_PERCENTAGE) {
+            } else if (mProgressTextType == PROGRESS_TEXT_PERCENTAGE) {
                 currentValue = NumberUtils.decimalFloat(currentProgressValue * 100) + " %";
             }
             float measureText = mTextPaint.measureText(currentValue);

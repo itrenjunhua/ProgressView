@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * <p>
  * 创建时间：2019-11-30   22:04
  * <p>
- * 描述：
+ * 描述：该页面测试 XxxProgressView 每次设置进度后都会重新开始绘制
  * <p>
  * 修订历史：
  * <p>

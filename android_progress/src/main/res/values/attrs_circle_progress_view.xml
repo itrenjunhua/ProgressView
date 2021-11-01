@@ -13,7 +13,7 @@
         <!--文字大小-->
         <attr name="circle_pv_text_size" format="dimension" />
         <!--当前结果显示样式-->
-        <attr name="circle_pv_show_type" format="enum">
+        <attr name="circle_pv_progress_text_type" format="enum">
             <!--不显示当前值-->
             <enum name="none" value="0" />
             <!--小数点形式显示-->

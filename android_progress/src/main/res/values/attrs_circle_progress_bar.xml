@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleProgressbar">
+        <!-- 圆环的宽度 -->
+        <attr name="circle_pb_width" format="dimension" />
+        <!-- 圆环的颜色 -->
+        <attr name="circle_pb_color" format="color" />
+        <!-- 圆环进度的颜色 -->
+        <attr name="circle_pb_progress_color" format="color" />
+        <!--  最大进度 -->
+        <attr name="circle_pb_max" format="integer" />
+        <!--  当前进度 -->
+        <attr name="circle_pb_progress" format="integer" />
+        <!--当前结果显示样式-->
+        <attr name="circle_pb_progress_bar_type" format="enum">
+            <!-- 中间空白 -->
+            <enum name="stroke" value="0" />
+            <!-- 中间填充 -->
+            <enum name="fill" value="1" />
+        </attr>
+
+        <!-- 中间进度百分比的字符串的颜色 -->
+        <attr name="circle_pb_textColor" format="color" />
+        <!-- 中间进度百分比的字符串的文字大小 -->
+        <attr name="circle_pb_textSize" format="dimension" />
+        <!--中间进度百分比显示样式-->
+        <attr name="circle_pb_progress_text_type" format="enum">
+            <!--不显示当前值-->
+            <enum name="none" value="0" />
+            <!--小数点形式显示-->
+            <enum name="decimal" value="1" />
+            <!--百分比形式显示，默认-->
+            <enum name="percentage" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

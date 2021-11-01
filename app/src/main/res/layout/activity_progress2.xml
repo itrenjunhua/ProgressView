@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:text="注意：该页面测试 CircleProgressBar 控件，模仿下载进度，如果仅仅只需要显示进度不需要实时动态更新，请查看 “进度控件1” 页面"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bt_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="开始进度" />
+
+    <com.renj.progress.CircleProgressBar
+        android:id="@+id/circle_pb1"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        app:circle_pb_color="#aaaaaa"
+        app:circle_pb_max="100"
+        app:circle_pb_progress_bar_type="stroke"
+        app:circle_pb_progress_color="#ff0000"
+        app:circle_pb_progress_text_type="percentage"
+        app:circle_pb_textColor="#00ff00"
+        app:circle_pb_textSize="12sp"
+        app:circle_pb_width="18dp" />
+
+    <com.renj.progress.CircleProgressBar
+        android:id="@+id/circle_pb2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="40dp"
+        app:circle_pb_color="#888888"
+        app:circle_pb_max="100"
+        app:circle_pb_progress_bar_type="fill"
+        app:circle_pb_progress_color="#33000000"
+        app:circle_pb_progress_text_type="none"
+        app:circle_pb_width="2dp"  />
+
+</LinearLayout>

@@ -21,6 +21,9 @@
             android:name=".ProgressActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".Progress2Activity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".TouchActivity"
             android:screenOrientation="portrait" />
     </application>

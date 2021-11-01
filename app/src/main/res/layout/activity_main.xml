@@ -12,13 +12,20 @@
         android:id="@+id/bt_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="进度控件" />
+        android:text="进度控件1" />
+
+    <Button
+        android:id="@+id/bt_progress2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="进度控件2" />
 
     <Button
         android:id="@+id/bt_touch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="12dp"
         android:text="滑动控件" />
 
 </LinearLayout>

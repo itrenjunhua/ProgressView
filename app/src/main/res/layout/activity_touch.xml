@@ -8,6 +8,17 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:text="注意：该页面控件可手动滑动调整进度"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+
     <Button
         android:id="@+id/bt_set_value"
         android:layout_width="match_parent"

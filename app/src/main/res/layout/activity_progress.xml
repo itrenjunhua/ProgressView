@@ -8,6 +8,16 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:text="注意：该页面测试 XxxProgressView 控件每次设置进度后都会重新开始绘制，如果需要直接在上一次进度上进行累加，请查看 “进度控件2” 页面"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
     <Button
         android:id="@+id/bt_update"
         android:layout_width="match_parent"
@@ -21,7 +31,7 @@
         android:layout_height="200dp"
         android:layout_marginTop="10dp"
         app:circle_pv_current="20"
-        app:circle_pv_show_type="decimal"
+        app:circle_pv_progress_text_type="decimal"
         app:circle_pv_start_point="top_left"
         app:circle_pv_total="100" />
 

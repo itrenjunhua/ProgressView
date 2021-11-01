@@ -23,7 +23,8 @@ import com.renj.progress.utils.NumberUtils;
  * <p>
  * 创建时间：2019-10-21   11:37
  * <p>
- * 描述：半圆形进度控件
+ * 描述：半圆形进度控件。<b>注意：该控件每次设置进度后都会重新开始绘制，
+ * 如果需要直接在上一次进度上进行累加，请使用 {@link CircleProgressBar} 控件</b>
  * <p>
  * 修订历史：
  * <p>
@@ -39,13 +40,13 @@ public class SemicircleProgressView extends View {
     private final int SHOW_TYPE_PERCENTAGE = 2; // 百分比形式显示，默认
     private final int DEFAULT_MAX_PROGRESS = 100; // 默认最大进度
     // 默认颜色和大小
-    private int DEFAULT_BG_COLOR = Color.GRAY;
-    private int DEFAULT_FULL_COLOR = Color.RED;
-    private int DEFAULT_TEXT_COLOR = Color.BLACK;
-    private int DEFAULT_CURRENT_TEXT_COLOR = Color.RED;
-    private float DEFAULT_CIRCLE_RING_WIDTH = DimensionUtils.dp2px(getContext(), 12);
-    private float DEFAULT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15);
-    private float DEFAULT_CURRENT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 18);
+    private final int DEFAULT_BG_COLOR = Color.GRAY;
+    private final int DEFAULT_FULL_COLOR = Color.RED;
+    private final int DEFAULT_TEXT_COLOR = Color.BLACK;
+    private final int DEFAULT_CURRENT_TEXT_COLOR = Color.RED;
+    private final float DEFAULT_CIRCLE_RING_WIDTH = DimensionUtils.dp2px(getContext(), 12);
+    private final float DEFAULT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 15);
+    private final float DEFAULT_CURRENT_TEXT_SIZE = DimensionUtils.sp2px(getContext(), 18);
 
     // 默认控件的宽和高
     private int mWidth = DEFAULT_VIEW_WIDTH;

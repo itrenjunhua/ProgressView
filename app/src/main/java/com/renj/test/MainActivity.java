@@ -18,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        findViewById(R.id.bt_progress2).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Progress2Activity.class);
+            startActivity(intent);
+        });
+
 
         findViewById(R.id.bt_touch).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TouchActivity.class);
