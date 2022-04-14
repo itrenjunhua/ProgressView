@@ -49,6 +49,22 @@
         app:circle_pb_progress_bar_type="fill"
         app:circle_pb_progress_color="#33000000"
         app:circle_pb_progress_text_type="none"
-        app:circle_pb_width="2dp"  />
+        app:circle_pb_width="2dp" />
+
+    <FrameLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.renj.test.view.TestRadiusView
+            android:layout_width="150dp"
+            android:layout_height="150dp"/>
+
+        <com.renj.progress.SquareProgressBar
+            android:id="@+id/square_bar1"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+
+    </FrameLayout>
 
 </LinearLayout>

@@ -2,14 +2,12 @@ package com.renj.test;
 
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.renj.progress.CircleProgressBar;
-import com.renj.progress.CircleProgressView;
-import com.renj.progress.SemicircleProgressView;
+import com.renj.progress.SquareProgressBar;
 
 /**
  * ======================================================================
@@ -29,6 +27,8 @@ public class Progress2Activity extends AppCompatActivity {
     private CircleProgressBar circleProgressBar1;
     private CircleProgressBar circleProgressBar2;
 
+    private SquareProgressBar squareProgressBar1;
+
     private boolean progressFinish = true;
 
     @Override
@@ -40,6 +40,8 @@ public class Progress2Activity extends AppCompatActivity {
         circleProgressBar1 = findViewById(R.id.circle_pb1);
         circleProgressBar2 = findViewById(R.id.circle_pb2);
 
+        squareProgressBar1 = findViewById(R.id.square_bar1);
+
         btUpdate.setOnClickListener(v -> {
             if (!progressFinish) return;
             new Thread(() -> {
@@ -49,6 +51,8 @@ public class Progress2Activity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         circleProgressBar1.setProgress(progress);
                         circleProgressBar2.setProgress(progress);
+
+                        squareProgressBar1.setProgress(progress);
                     });
                     SystemClock.sleep(50);
                 }
