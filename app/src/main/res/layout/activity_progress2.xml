@@ -63,6 +63,7 @@
         <com.renj.progress.SquareProgressBar
             android:id="@+id/square_bar1"
             android:layout_width="150dp"
+            app:square_pb_radius="15dp"
             android:layout_height="150dp" />
 
     </FrameLayout>

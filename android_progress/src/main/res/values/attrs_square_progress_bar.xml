@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SquareProgressbar">
+        <!--  最大进度 -->
+        <attr name="square_pb_maxProgress" format="integer" />
+        <!--  当前进度 -->
+        <attr name="square_pb_progress" format="integer" />
+        <!--  圆角大小 -->
+        <attr name="square_pb_radius" format="dimension" />
+        <!--  进度背景颜色 -->
+        <attr name="square_pb_bgColor" format="color" />
+
+        <!--当前进度条背景变化样式-->
+        <attr name="circle_pb_progressBarBgType" format="enum">
+            <!-- 由有背景色变透明(进度为0时显示背景，进度为100时，无背景) -->
+            <enum name="bgToTran" value="0" />
+            <!-- 由透明变有背景色(进度为0时无背景，进度为100时，有背景色) -->
+            <enum name="tranToBg" value="1" />
+        </attr>
+
+        <!-- 边框宽度 -->
+        <attr name="square_pb_strokeWidth" format="dimension" />
+        <!-- 边框颜色 -->
+        <attr name="square_pb_StrokeColor" format="color" />
+        <!--当前进度条显示样式-->
+        <attr name="circle_pb_progressBarType" format="enum">
+            <!-- 中间空白（边框进度） -->
+            <enum name="stroke" value="0" />
+            <!-- 中间填充 -->
+            <enum name="fill" value="1" />
+            <!-- 边框进度和背景进度同时存在 -->
+            <enum name="strokeAndFill" value="2" />
+        </attr>
+
+        <!-- 中间进度百分比的字符串的颜色 -->
+        <attr name="square_pb_textColor" format="color" />
+        <!-- 中间进度百分比的字符串的文字大小 -->
+        <attr name="square_pb_textSize" format="dimension" />
+        <!--中间进度百分比显示样式-->
+        <attr name="square_pb_progressTextType" format="enum">
+            <!--不显示当前值-->
+            <enum name="none" value="0" />
+            <!--小数点形式显示-->
+            <enum name="decimal" value="1" />
+            <!--百分比形式显示，默认-->
+            <enum name="percentage" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

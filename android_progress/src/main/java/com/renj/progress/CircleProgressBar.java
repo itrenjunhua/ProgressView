@@ -167,9 +167,7 @@ public class CircleProgressBar extends View {
             // 测量字体宽度，我们需要根据字体的宽度设置在圆环中间
             float textWidth = paint.measureText(percent);
             // 画出进度百分比
-            if (progressTextType == PROGRESS_TEXT_PERCENTAGE) {
-                canvas.drawText(percent, centreX - textWidth / 2, centreY + textSize / 2, paint);
-            }
+            canvas.drawText(percent, centreX - textWidth / 2, centreY + textSize / 2, paint);
         } else if (progressTextType == PROGRESS_TEXT_PERCENTAGE) {
             paint.setStrokeWidth(0);
             paint.setColor(textColor);
@@ -181,9 +179,7 @@ public class CircleProgressBar extends View {
             // 测量字体宽度，我们需要根据字体的宽度设置在圆环中间
             float textWidth = paint.measureText(percent);
             // 画出进度百分比
-            if (progressTextType == PROGRESS_TEXT_PERCENTAGE) {
-                canvas.drawText(percent, centreX - textWidth / 2, centreY + textSize / 2, paint);
-            }
+            canvas.drawText(percent, centreX - textWidth / 2, centreY + textSize / 2, paint);
         }
     }
 

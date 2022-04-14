@@ -36,7 +36,7 @@ public class TestRadiusView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        paint.setColor(Color.parseColor("#FF00FF"));
+        paint.setColor(Color.parseColor("#60FF00FF"));
         canvas.drawRoundRect(0,0,getWidth(),getHeight(),30,30,paint);
     }
 }
