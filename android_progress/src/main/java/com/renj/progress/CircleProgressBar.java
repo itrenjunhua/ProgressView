@@ -27,12 +27,28 @@ import com.renj.progress.utils.NumberUtils;
  * ======================================================================
  */
 public class CircleProgressBar extends View {
-    public static final int PROGRESS_TEXT_NONE = 0; // 不显示当前值
-    public static final int PROGRESS_TEXT_DECIMAL = 1; // 小数点形式显示
-    public static final int PROGRESS_TEXT_PERCENTAGE = 2; // 百分比形式显示，默认
+    /**
+     * 中间进度文字样式类型(progressTextType)——不显示当前值，默认
+     */
+    public static final int PROGRESS_TEXT_NONE = 0;
+    /**
+     * 中间进度文字样式类型(progressTextType)——小数点形式显示
+     */
+    public static final int PROGRESS_TEXT_DECIMAL = 1;
+    /**
+     * 中间进度文字样式类型(progressTextType)——百分比形式显示
+     */
+    public static final int PROGRESS_TEXT_PERCENTAGE = 2;
 
-    public static final int PROGRESS_BAR_STROKE = 0; // 空心
-    public static final int PROGRESS_BAR_FILL = 1; // 填充
+
+    /**
+     * 进度条样式(progressBarType)——空心
+     */
+    public static final int PROGRESS_BAR_STROKE = 0;
+    /**
+     * 进度条样式(progressBarType)——填充
+     */
+    public static final int PROGRESS_BAR_FILL = 1;
 
     /**
      * 画笔对象的引用

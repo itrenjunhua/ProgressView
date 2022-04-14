@@ -15,6 +15,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.IntRange;
+
 import com.renj.progress.utils.DimensionUtils;
 import com.renj.progress.utils.NumberUtils;
 
@@ -34,16 +36,42 @@ import com.renj.progress.utils.NumberUtils;
  */
 public class SquareProgressBar extends View {
 
-    public static final int PROGRESS_TEXT_NONE = 0; // 不显示当前值
-    public static final int PROGRESS_TEXT_DECIMAL = 1; // 小数点形式显示
-    public static final int PROGRESS_TEXT_PERCENTAGE = 2; // 百分比形式显示，默认
+    /**
+     * 中间进度文字样式类型(progressTextType)——不显示当前值，默认
+     */
+    public static final int PROGRESS_TEXT_NONE = 0;
+    /**
+     * 中间进度文字样式类型(progressTextType)——小数点形式显示
+     */
+    public static final int PROGRESS_TEXT_DECIMAL = 1;
+    /**
+     * 中间进度文字样式类型(progressTextType)——百分比形式显示
+     */
+    public static final int PROGRESS_TEXT_PERCENTAGE = 2;
 
-    public static final int PROGRESS_BAR_STROKE = 0; // 只显示边框
-    public static final int PROGRESS_BAR_FILL = 1; // 只填充背景
-    public static final int PROGRESS_BAR_STROKE_AND_FILL = 2; // 显示边框和背景
 
-    public static final int PROGRESS_BAR_BG_BG_TO_TRAN = 0; // 由有背景色变透明(进度为0时显示背景，进度为100时，无背景)
-    public static final int PROGRESS_BAR_BG_TRAN_TO_BG = 1; // 由透明变有背景色(进度为0时无背景，进度为100时，有背景色)
+    /**
+     * 进度条样式(progressBarType)——只显示边框
+     */
+    public static final int PROGRESS_BAR_STROKE = 0;
+    /**
+     * 进度条样式(progressBarType)——只填充背景
+     */
+    public static final int PROGRESS_BAR_FILL = 1;
+    /**
+     * 进度条样式(progressBarType)——显示边框和背景
+     */
+    public static final int PROGRESS_BAR_STROKE_AND_FILL = 2;
+
+
+    /**
+     * 填充背景变化样式(progressBarBgType)——由有背景色变透明(进度为0时显示背景，进度为100时，无背景)
+     */
+    public static final int PROGRESS_BAR_BG_BG_TO_TRAN = 0;
+    /**
+     * 填充背景变化样式(progressBarBgType)——由透明变有背景色(进度为0时无背景，进度为100时，有背景色)
+     */
+    public static final int PROGRESS_BAR_BG_TRAN_TO_BG = 1;
 
     /**
      * 最大进度，默认100
@@ -70,7 +98,7 @@ public class SquareProgressBar extends View {
      */
     private int progressBarType;
     /**
-     * 背景变化样式
+     * 填充背景变化样式
      */
     private int progressBarBgType;
     /**
@@ -134,7 +162,7 @@ public class SquareProgressBar extends View {
 
         textColor = mTypedArray.getColor(R.styleable.CircleProgressbar_circle_pb_textColor, Color.RED);
         textSize = mTypedArray.getDimension(R.styleable.CircleProgressbar_circle_pb_textSize, 15);
-        progressTextType = mTypedArray.getInteger(R.styleable.SquareProgressbar_square_pb_progressTextType,PROGRESS_TEXT_NONE);
+        progressTextType = mTypedArray.getInteger(R.styleable.SquareProgressbar_square_pb_progressTextType, PROGRESS_TEXT_NONE);
 
         mTypedArray.recycle();
 
@@ -353,7 +381,7 @@ public class SquareProgressBar extends View {
      * 设置进度边框宽度 dp
      */
     public void setStrokeWidth(float strokeWidth) {
-        this.strokeWidth = DimensionUtils.dp2px(getContext(),strokeWidth);
+        this.strokeWidth = DimensionUtils.dp2px(getContext(), strokeWidth);
     }
 
     /**
@@ -379,8 +407,12 @@ public class SquareProgressBar extends View {
 
     /**
      * 设置进度条样式
+     *
+     * @param progressBarType {@link #PROGRESS_BAR_STROKE}、{@link #PROGRESS_BAR_FILL}、{@link #PROGRESS_BAR_STROKE_AND_FILL}
      */
-    public void setProgressBarType(int progressBarType) {
+    public void setProgressBarType(
+            @IntRange(from = PROGRESS_BAR_STROKE, to = PROGRESS_BAR_STROKE_AND_FILL)
+                    int progressBarType) {
         this.progressBarType = progressBarType;
     }
 
@@ -393,8 +425,12 @@ public class SquareProgressBar extends View {
 
     /**
      * 设置进度背景样式
+     *
+     * @param progressBarBgType {@link #PROGRESS_BAR_BG_BG_TO_TRAN}、{@link #PROGRESS_BAR_BG_TRAN_TO_BG}
      */
-    public void setProgressBarBgType(int progressBarBgType) {
+    public void setProgressBarBgType(
+            @IntRange(from = PROGRESS_BAR_BG_BG_TO_TRAN, to = PROGRESS_BAR_BG_TRAN_TO_BG)
+                    int progressBarBgType) {
         this.progressBarBgType = progressBarBgType;
     }
 
@@ -423,7 +459,7 @@ public class SquareProgressBar extends View {
      * 设置圆角大小 dp
      */
     public void setRadius(float radius) {
-        this.radius = DimensionUtils.dp2px(getContext(),radius);
+        this.radius = DimensionUtils.dp2px(getContext(), radius);
     }
 
     /**
@@ -435,8 +471,12 @@ public class SquareProgressBar extends View {
 
     /**
      * 设置进度文字样式
+     *
+     * @param progressTextType {@link #PROGRESS_TEXT_NONE}、{@link #PROGRESS_TEXT_DECIMAL}、{@link #PROGRESS_TEXT_PERCENTAGE}
      */
-    public void setProgressTextType(int progressTextType) {
+    public void setProgressTextType(
+            @IntRange(from = PROGRESS_TEXT_NONE, to = PROGRESS_TEXT_PERCENTAGE)
+                    int progressTextType) {
         this.progressTextType = progressTextType;
     }
 
@@ -451,7 +491,7 @@ public class SquareProgressBar extends View {
      * 设置进度文字大小 sp
      */
     public void setTextSize(float textSize) {
-        this.textSize = DimensionUtils.sp2px(getContext(),textSize);
+        this.textSize = DimensionUtils.sp2px(getContext(), textSize);
     }
 
     /**
