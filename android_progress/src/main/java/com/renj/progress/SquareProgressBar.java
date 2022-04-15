@@ -148,7 +148,7 @@ public class SquareProgressBar extends View {
         @SuppressLint("CustomViewStyleable")
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.SquareProgressbar);
 
-        //获取自定义属性和默认值
+        // 获取自定义属性和默认值
         maxProgress = mTypedArray.getInteger(R.styleable.SquareProgressbar_square_pb_maxProgress, 100);
         progress = mTypedArray.getInteger(R.styleable.SquareProgressbar_square_pb_progress, 0);
         radius = mTypedArray.getDimension(R.styleable.SquareProgressbar_square_pb_radius, 0);
@@ -160,12 +160,17 @@ public class SquareProgressBar extends View {
         strokeWidth = mTypedArray.getDimension(R.styleable.SquareProgressbar_square_pb_strokeWidth, 10);
         strokeColor = mTypedArray.getColor(R.styleable.SquareProgressbar_square_pb_StrokeColor, Color.GREEN);
 
-        textColor = mTypedArray.getColor(R.styleable.CircleProgressbar_circle_pb_textColor, Color.RED);
-        textSize = mTypedArray.getDimension(R.styleable.CircleProgressbar_circle_pb_textSize, 15);
+        textColor = mTypedArray.getColor(R.styleable.SquareProgressbar_square_pb_textColor, Color.RED);
+        textSize = mTypedArray.getDimension(R.styleable.SquareProgressbar_square_pb_textSize, DimensionUtils.sp2px(context, 12));
         progressTextType = mTypedArray.getInteger(R.styleable.SquareProgressbar_square_pb_progressTextType, PROGRESS_TEXT_NONE);
 
         mTypedArray.recycle();
+        // 设置画笔信息
+        setPaintInfo();
+    }
 
+    // 设置画笔信息
+    private void setPaintInfo() {
         mProgressBgPaint.setStyle(Paint.Style.FILL);
         mProgressBgPaint.setColor(bgColor);
 
@@ -176,7 +181,7 @@ public class SquareProgressBar extends View {
         mProgressTxtPaint.setStrokeWidth(0);
         mProgressTxtPaint.setColor(textColor);
         mProgressTxtPaint.setTextSize(textSize);
-        mProgressTxtPaint.setTypeface(Typeface.DEFAULT_BOLD); // 设置字体
+        mProgressTxtPaint.setTypeface(Typeface.DEFAULT_BOLD); // 设置字体加粗
     }
 
     @Override
@@ -214,8 +219,12 @@ public class SquareProgressBar extends View {
         }
     }
 
+    // ============================= 绘制部分 ============================= //
+
     @Override
     protected void onDraw(Canvas canvas) {
+        // 设置画笔信息
+        setPaintInfo();
         // 保证开始位置在上方位置，需要进行偏移，根据上面说明来处理的
         float startOffset = mViewRectF.height() + (mViewRectF.centerX() - radius * 1.4f);
 
@@ -273,6 +282,7 @@ public class SquareProgressBar extends View {
         }
     }
 
+    // 实际背景绘制方法
     private void reallyDrawProgressBg(Canvas canvas, Path renderBgPaths) {
         // 使路径连接到中心位置
         renderBgPaths.lineTo(mViewRectF.centerX(), mViewRectF.centerY());
@@ -325,21 +335,21 @@ public class SquareProgressBar extends View {
             // 测量字体宽度，我们需要根据字体的宽度设置在圆环中间
             float textWidth = mProgressTxtPaint.measureText(percent);
             // 画出进度百分比
-            canvas.drawText(percent, mViewRectF.centerX() - textWidth / 2,
+            canvas.drawText(percent, mViewRectF.centerX() - textWidth / 2f,
                     mViewRectF.centerY() + textSize / 2f, mProgressTxtPaint);
-
         } else if (progressTextType == PROGRESS_TEXT_PERCENTAGE) {
             // 中间的进度百分比，先转换成float在进行除法运算，不然都为0
             float percentValue = progress * 1.0f / maxProgress;
-            String percent = NumberUtils.decimalFloat(percentValue * 100) + "%";
+            String percent = NumberUtils.decimalInt(percentValue * 100) + "%";
             // 测量字体宽度，我们需要根据字体的宽度设置在圆环中间
             float textWidth = mProgressTxtPaint.measureText(percent);
             // 画出进度百分比
-            canvas.drawText(percent, mViewRectF.centerX() - textWidth / 2,
+            canvas.drawText(percent, mViewRectF.centerX() - textWidth / 2f,
                     mViewRectF.centerY() + textSize / 2f, mProgressTxtPaint);
-
         }
     }
+
+    // ============================= 属性设置和属性获取 ============================= //
 
     /**
      * 获取最大进度

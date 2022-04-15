@@ -26,8 +26,11 @@ public class Progress2Activity extends AppCompatActivity {
     private Button btUpdate;
     private CircleProgressBar circleProgressBar1;
     private CircleProgressBar circleProgressBar2;
+    private CircleProgressBar circleProgressBar3;
 
     private SquareProgressBar squareProgressBar1;
+    private SquareProgressBar squareProgressBar2;
+    private SquareProgressBar squareProgressBar3;
 
     private boolean progressFinish = true;
 
@@ -39,8 +42,11 @@ public class Progress2Activity extends AppCompatActivity {
         btUpdate = findViewById(R.id.bt_update);
         circleProgressBar1 = findViewById(R.id.circle_pb1);
         circleProgressBar2 = findViewById(R.id.circle_pb2);
+        circleProgressBar3 = findViewById(R.id.circle_pb3);
 
         squareProgressBar1 = findViewById(R.id.square_bar1);
+        squareProgressBar2 = findViewById(R.id.square_bar2);
+        squareProgressBar3 = findViewById(R.id.square_bar3);
 
         btUpdate.setOnClickListener(v -> {
             if (!progressFinish) return;
@@ -51,8 +57,11 @@ public class Progress2Activity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         circleProgressBar1.setProgress(progress);
                         circleProgressBar2.setProgress(progress);
+                        circleProgressBar3.setProgress(progress);
 
                         squareProgressBar1.setProgress(progress);
+                        squareProgressBar2.setProgress(progress);
+                        squareProgressBar3.setProgress(progress);
                     });
                     SystemClock.sleep(50);
                 }
